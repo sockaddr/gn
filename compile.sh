@@ -3,4 +3,6 @@ gcc \
 -Wall -Werror -Wextra \
 -o gn \
 \
-src/main.c
+src/main.c \
+\
+-lpthread
