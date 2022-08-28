@@ -1,7 +1,12 @@
 void
+gn_start_conn_mgmt_thrds (void)
+{
+}
+
+void
 gn_wrkr_main (void)
 {
-
+  gn_start_conn_mgmt_thrds ();
 }
 
 int
