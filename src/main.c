@@ -15,7 +15,7 @@ gn_conn_mgmt_thrd (void * const p)
 }
 
 void
-gn_start_conn_mgmt_thrds (void)
+gn_start_conn_mgmt_thrds (conn_mgmt_thrd_conf_list * const list)
 {
   /* Number of connection management threads to start. size_t would be too large.
      uint8_t might be too small for servers handling large amounts of connections.
@@ -30,10 +30,27 @@ gn_start_conn_mgmt_thrds (void)
   }
 }
 
+struct gn_conn_mgmt_thrd_conf_s {
+  pthread_t thrd_id;
+};
+
+typedef struct gn_conn_mgmt_thrd_conf_s gn_conn_mgmt_thrd_conf_s;
+
+struct gn_conn_mgmt_thrd_conf_list_s
+{
+  gn_conn_mgmt_thrd_conf_s * head;
+  gn_conn_mgmt_thrd_conf_s * tail;
+  uint16_t                   len;
+};
+
+typedef struct gn_conn_mgmt_thrd_conf_list_s gn_conn_mgmt_thrd_conf_list_s;
+
 void
 gn_wrkr_main (void)
 {
-  gn_start_conn_mgmt_thrds ();
+  gn_conn_mgmt_thrd_conf_list_s conn_mgmt_thrd_conf_list;
+  // Start connection management threads.
+  gn_start_conn_mgmt_thrds (&conn_mgmt_thrd_conf_list);
 }
 
 int
@@ -43,5 +60,6 @@ main (const int argc, const char * const * const argv)
   if (argc < 0 && argv) {} // TODO: Remove.
 
   gn_wrkr_main ();
+
   return 0;
 }
