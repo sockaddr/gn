@@ -3,6 +3,10 @@
 
 #include <wrkr/hdr/gn_conn_mgmt_thrd_conf_list_s.h>
 
+#include <error.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 void * gn_conn_mgmt_thrd (void * const);
 
 #endif // GN_START_CONN_MGMT_THRDS_H
