@@ -22,8 +22,12 @@ gn_wrkr_main (void)
 
   gn_conn_mgmt_thrd_conf_list_s conn_mgmt_thrd_conf_list;
   gn_conn_mgmt_thrd_conf_list_init (&conn_mgmt_thrd_conf_list);
-
   gn_start_conn_mgmt_thrds (&conn_mgmt_thrd_conf_list); // Start connection management threads.
+
+  gn_conn_acpt_thrd_conf_list_s conn_acpt_thrd_conf_list;
+  gn_conn_acpt_thrd_conf_list_init (&conn_acpt_thrd_conf_list);
+  gn_start_conn_acpt_thrds (&conn_acpt_thrd_conf_list); // Start connection acceptance threads.
+
 
   while (true) { // Main worker loop.
     // TODO: Remove block below.
@@ -36,4 +40,5 @@ gn_wrkr_main (void)
   }
 
   gn_stop_conn_mgmt_thrds (&conn_mgmt_thrd_conf_list); // Stop connection management threads.
+  gn_stop_conn_acpt_thrds (&conn_acpt_thrd_conf_list); // Stop connection acceptance threads.
 }
