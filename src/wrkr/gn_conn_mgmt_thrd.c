@@ -1,10 +1,15 @@
-#include <stdio.h> // TODO: Remove.
+#include <wrkr/hdr/gn_conn_mgmt_thrd.h>
+
+#include <unistd.h> // TODO: Remove.
 
 void *
 gn_conn_mgmt_thrd (void * const p)
 {
-  // To silence compiler error "unused parameter p"
-  if (p) {} // TODO: Remove.
+  if (p == NULL) return NULL; // TODO: Log error.
 
-  return NULL;
+  while (true) {
+    sleep (1); // TODO: Remove.
+  }
+
+  return NULL; // TODO: Maybe return something else or store exit code in conf struct.
 }
