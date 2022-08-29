@@ -7,6 +7,7 @@ gcc \
 \
 src/main.c \
 src/wrkr/gn_conn_mgmt_thrd.c \
+src/wrkr/gn_conn_mgmt_thrd_conf_init.c \
 src/wrkr/gn_conn_mgmt_thrd_conf_list_push_back.c \
 src/wrkr/gn_start_conn_mgmt_thrds.c \
 src/wrkr/gn_wrkr_main.c \

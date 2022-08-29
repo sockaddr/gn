@@ -26,7 +26,7 @@ gn_start_conn_mgmt_thrds (gn_conn_mgmt_thrd_conf_list_s * const list)
       continue;
     }
 
-    // TODO: Initialize conn_mgmt_thrd_conf.
+    gn_conn_mgmt_thrd_conf_init (conn_mgmt_thrd_conf);
     printf ("Starting connection management thread (conf ptr %p)... ", conn_mgmt_thrd_conf); // TODO: Remove.
     const int rpthread_create = pthread_create (&conn_mgmt_thrd_conf->thrd_id, NULL, gn_conn_mgmt_thrd, conn_mgmt_thrd_conf);
     switch (rpthread_create) {
