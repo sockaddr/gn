@@ -15,13 +15,13 @@ void sigint_handler (int v) { // TODO: Remove.
 
 // END REMOVE
 
-void
+void // TODO: Maybe return a value.
 gn_wrkr_main (void)
 {
   signal (SIGINT, sigint_handler); // TODO: Remove. This is just for testing a server stop.
 
   gn_conn_mgmt_thrd_conf_list_s conn_mgmt_thrd_conf_list;
-  // TODO: Initialize conn_mgmt_thrd_conf_list
+  gn_conn_mgmt_thrd_conf_list_init (&conn_mgmt_thrd_conf_list);
 
   gn_start_conn_mgmt_thrds (&conn_mgmt_thrd_conf_list); // Start connection management threads.
 
