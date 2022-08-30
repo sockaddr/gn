@@ -6,14 +6,18 @@
 #include <stdio.h>
 #include <unistd.h>
 
-volatile bool sigint_rcvd = false; // TODO: Remove.
+volatile bool sigint_rcvd = false;
 
-void sigint_handler (int v) { // TODO: Remove.
+void sigint_handler (int v) {
   if (v) {}
   sigint_rcvd = true;
 }
 
 // END REMOVE
+
+/*
+ * TODO: Add description.
+ */
 
 void // TODO: Maybe return a value.
 gn_wrkr_main (void)
@@ -36,7 +40,7 @@ gn_wrkr_main (void)
       break;
     }
 
-    sleep (1);
+    sleep (1); // TODO: Remove.
   }
 
   gn_stop_conn_mgmt_thrds (&conn_mgmt_thrd_conf_list); // Stop connection management threads.

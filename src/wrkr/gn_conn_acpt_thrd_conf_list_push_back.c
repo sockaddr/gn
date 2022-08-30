@@ -8,7 +8,7 @@ bool
 gn_conn_acpt_thrd_conf_list_push_back (gn_conn_acpt_thrd_conf_list_s * const list,
                                        gn_conn_acpt_thrd_conf_s * const      conf)
 {
-  // list->len is a uint16_t
+  // list->len is a uint8_t
   switch (list->len) {
     case UINT8_MAX: {
       return true;

@@ -5,7 +5,10 @@ gcc \
 \
 -Isrc \
 \
-src/main.c \
+-D_GNU_SOURCE \
+\
+src/comn/main.c \
+\
 src/wrkr/gn_conn_acpt_thrd.c \
 src/wrkr/gn_conn_acpt_thrd_conf_init.c \
 src/wrkr/gn_conn_acpt_thrd_conf_list_init.c \

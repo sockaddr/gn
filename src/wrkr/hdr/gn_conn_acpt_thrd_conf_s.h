@@ -8,7 +8,12 @@
 
 typedef struct gn_conn_acpt_thrd_conf_s gn_conn_acpt_thrd_conf_s;
 
-struct gn_conn_acpt_thrd_conf_s {
+/*
+ * TODO: Add description.
+ */
+
+struct gn_conn_acpt_thrd_conf_s
+{
   bool                       stop;
   gn_conn_acpt_thrd_state_e  state;
   gn_conn_acpt_thrd_conf_s * prev;
