@@ -1,5 +1,7 @@
 #include <wrkr/hdr/gn_conn_acpt_thrd.h>
 
+#include <wrkr/hdr/gn_conn_s.h>
+
 #include <errno.h> // TODO: Remove.
 #include <error.h> // TODO: Remove.
 #include <stdio.h> // TODO: Remove.
@@ -7,17 +9,6 @@
 #include <string.h> // TODO: Remove.
 #include <unistd.h> // TODO: Remove.
 #include <arpa/inet.h> // TODO: Remove.
-
-typedef struct gn_lstnr_conf_s gn_lstnr_conf_s;
-
-struct gn_lstnr_conf_s
-{
-  int               fd;
-  char *            addr;
-  uint16_t          port;
-  gn_lstnr_conf_s * prev;
-  gn_lstnr_conf_s * next;
-};
 
 void
 gn_lstnr_conf_init (gn_lstnr_conf_s * const conf)
@@ -195,6 +186,24 @@ gn_conn_acpt_thrd (void * const p)
       }
 
       printf ("Connection from [%s]:%i to [%s] / [%s]:%i\n\n", saddr, sport, lstnr_conf->addr, daddr, lstnr_conf->port);
+
+      gn_conn_s * const conn = malloc (sizeof (gn_conn_s));
+      if (conn != NULL) {
+        conn->saddr = malloc (strlen (saddr) + 1);
+        strcpy (conn->saddr, saddr);
+        conn->sport = sport;
+        conn->daddr = malloc (strlen (daddr) + 1);
+        strcpy (conn->daddr, daddr);
+        conn->fd = raccept4;
+        conn->lstnr_conf = lstnr_conf;
+        continue;
+      } else error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate connection structure");
+
+      if (conn != NULL) {
+        free (conn->daddr);
+        free (conn->saddr);
+        free (conn);
+      }
 
       close_raccept4:
       // TODO: Loop close() if allowed by user in configuration file. Default: don't loop.
