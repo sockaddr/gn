@@ -1,6 +1,7 @@
 #include <wrkr/hdr/gn_conn_mgmt_thrd.h>
 
 #include <error.h> // TODO: Remove.
+
 /*
  * TODO: Add description.
  */

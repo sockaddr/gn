@@ -5,7 +5,6 @@
 
 #include <error.h>
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 void * gn_conn_mgmt_thrd (void * const);

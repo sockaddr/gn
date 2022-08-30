@@ -1,5 +1,7 @@
 #include <wrkr/hdr/gn_start_conn_mgmt_thrds.h>
 
+#include <stdio.h> // TODO: Remove.
+
 /*
  * TODO: Add description.
  */

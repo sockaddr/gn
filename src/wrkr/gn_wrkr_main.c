@@ -26,11 +26,13 @@ gn_wrkr_main (void)
 
   gn_conn_mgmt_thrd_conf_list_s conn_mgmt_thrd_conf_list;
   gn_conn_mgmt_thrd_conf_list_init (&conn_mgmt_thrd_conf_list);
-  gn_start_conn_mgmt_thrds (&conn_mgmt_thrd_conf_list); // Start connection management threads.
+  // Start connection management threads.
+  gn_start_conn_mgmt_thrds (&conn_mgmt_thrd_conf_list);
 
   gn_conn_acpt_thrd_conf_list_s conn_acpt_thrd_conf_list;
   gn_conn_acpt_thrd_conf_list_init (&conn_acpt_thrd_conf_list);
-  gn_start_conn_acpt_thrds (&conn_acpt_thrd_conf_list); // Start connection acceptance threads.
+  // Start connection acceptance threads.
+  gn_start_conn_acpt_thrds (&conn_acpt_thrd_conf_list, &conn_mgmt_thrd_conf_list);
 
 
   while (true) { // Main worker loop.
@@ -43,6 +45,9 @@ gn_wrkr_main (void)
     sleep (1); // TODO: Remove.
   }
 
-  gn_stop_conn_mgmt_thrds (&conn_mgmt_thrd_conf_list); // Stop connection management threads.
+  /* Stop acceptance threads first because gn_stop_conn_mgmt_thrds() will empty the conn_mgmt_thrd_conf_list and this
+   * list is used by connection acceptance threads. First stop the threads using the list, then empty it.
+   */
   gn_stop_conn_acpt_thrds (&conn_acpt_thrd_conf_list); // Stop connection acceptance threads.
+  gn_stop_conn_mgmt_thrds (&conn_mgmt_thrd_conf_list); // Stop connection management threads.
 }

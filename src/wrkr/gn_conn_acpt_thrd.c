@@ -17,6 +17,10 @@ gn_conn_acpt_thrd (void * const p)
   gn_conn_acpt_thrd_conf_s * const conn_acpt_thrd_conf = p;
   conn_acpt_thrd_conf->state = CONN_ACPT_THRD_RUNNING;
 
+  // Don't free this list in this function.
+  const gn_conn_mgmt_thrd_conf_list_s * const conn_mgmt_thrd_conf_list = conn_acpt_thrd_conf->conn_mgmt_thrd_conf_list;
+  if (conn_mgmt_thrd_conf_list == NULL) {} // TODO: Remove.
+
   while (true) {
 
     if (conn_acpt_thrd_conf->stop) {
