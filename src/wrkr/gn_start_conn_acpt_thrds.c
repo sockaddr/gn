@@ -44,7 +44,7 @@ gn_start_conn_acpt_thrds (gn_conn_acpt_thrd_conf_list_s * const list)
     }
 
     if (conn_acpt_thrd_conf == NULL) continue;
-    // TODO: Free conn_mgmt_thrd_conf members.
+    // TODO: Free conn_acpt_thrd_conf members.
     free (conn_acpt_thrd_conf);
     conn_acpt_thrd_conf = NULL;
   }
