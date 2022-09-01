@@ -1,19 +1,23 @@
 #include <wrkr/hdr/gn_wrkr_main.h>
 
-// TODO: Remove code below START
+// TODO: Remove code below, start.
 
+#include <errno.h>
+#include <error.h>
 #include <signal.h>
 #include <stdio.h>
 #include <unistd.h>
 
 volatile bool sigint_rcvd = false;
 
-void sigint_handler (int v) {
-  if (v) {}
+void
+sigint_handler (const int s)
+{
+  printf ("Signal %i\n", s);
   sigint_rcvd = true;
 }
 
-// END REMOVE
+// Remove code above, end.
 
 /*
  * TODO: Add description.
@@ -22,7 +26,17 @@ void sigint_handler (int v) {
 void // TODO: Maybe return a value.
 gn_wrkr_main (void)
 {
-  signal (SIGINT, sigint_handler); // TODO: Remove. This is just for testing a server stop.
+  // TODO: Remove. This is just for testing a server stop.
+  if (signal (SIGINT, sigint_handler) == SIG_ERR) {
+    error_at_line (0, errno, __FILE__, __LINE__, "Failed to register SIGINT handler");
+  }
+
+  // TODO: Receive and parse worker configuration.
+
+  gn_wrkr_conf_s wrkr_conf;
+  gn_wrkr_conf_init (&wrkr_conf);
+  wrkr_conf.conn_mgmt_thrd_num = 2;
+  wrkr_conf.conn_acpt_thrd_num = 4;
 
   gn_conn_mgmt_thrd_conf_list_s conn_mgmt_thrd_conf_list;
   gn_conn_mgmt_thrd_conf_list_init (&conn_mgmt_thrd_conf_list);
