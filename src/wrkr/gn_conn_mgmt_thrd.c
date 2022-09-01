@@ -17,7 +17,14 @@ gn_conn_mgmt_thrd (void * const p)
   gn_conn_mgmt_thrd_conf_s * const conn_mgmt_thrd_conf = p;
   conn_mgmt_thrd_conf->state = CONN_MGMT_THRD_RUNNING;
 
+  gn_conn_list_s conn_list;
+  gn_conn_list_init (&conn_list);
+
   while (true) {
+    gn_conn_s * conn = conn_list.head;
+    while (conn != NULL) {
+      
+    }
 
     if (conn_mgmt_thrd_conf->stop) {
       if (conn_mgmt_thrd_conf->state != CONN_MGMT_THRD_STOPPING) {

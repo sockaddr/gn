@@ -1,6 +1,8 @@
 #ifndef GN_LSTNR_CONF_S_H
 #define GN_LSTNR_CONF_S_H
 
+#include <stdint.h>
+
 typedef struct gn_lstnr_conf_s gn_lstnr_conf_s;
 
 struct gn_lstnr_conf_s
