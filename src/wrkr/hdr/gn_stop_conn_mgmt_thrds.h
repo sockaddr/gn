@@ -1,7 +1,7 @@
 #ifndef GN_STOP_CONN_MGMT_THRDS_H
 #define GN_STOP_CONN_MGMT_THRDS_H
 
-#include <wrkr/hdr/gn_conn_mgmt_thrd_conf_list_s.h>
+#include <wrkr/hdr/gn_wrkr_conf_s.h>
 
 // TODO: Maybe add cold attribute.
 void

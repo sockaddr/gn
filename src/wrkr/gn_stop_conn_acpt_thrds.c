@@ -4,11 +4,11 @@
 #include <stdio.h> // TODO: Remove.
 
 void
-gn_stop_conn_acpt_thrds (gn_conn_acpt_thrd_conf_list_s * const list)
+gn_stop_conn_acpt_thrds (gn_wrkr_conf_s * const wrkr_conf)
 {
-  gn_conn_acpt_thrd_conf_s * conf = list->head;
+  gn_conn_acpt_thrd_conf_s * conf = wrkr_conf->conn_acpt_thrd_conf_list.head;
 
-  while (list->len > 0) {
+  while (wrkr_conf->conn_acpt_thrd_conf_list.len > 0) {
     switch (conf->state) {
       // The thread reported that it's stopping, so we wait for the CONN_ACPT_THRD_STOPPED state.
       case CONN_ACPT_THRD_STOPPING: {
@@ -18,7 +18,7 @@ gn_stop_conn_acpt_thrds (gn_conn_acpt_thrd_conf_list_s * const list)
       case CONN_ACPT_THRD_STOPPED: {
         printf ("Stopped connection acceptance thread (conf ptr %p)\n", conf); // TODO: Remove.
         // Remove the configuration structure at any position in the list.
-        gn_conn_acpt_thrd_conf_list_remove (list, conf);
+        gn_conn_acpt_thrd_conf_list_remove (&wrkr_conf->conn_acpt_thrd_conf_list, conf);
         break;
       }
       // If the thread is running, send the stop signal if it wasn't already sent.
