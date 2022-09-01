@@ -196,7 +196,7 @@ gn_conn_acpt_thrd (void * const p)
         strcpy (conn->daddr, daddr);
         conn->fd = raccept4;
         conn->lstnr_conf = lstnr_conf;
-        continue;
+        // continue;
       } else error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate connection structure");
 
       if (conn != NULL) {
@@ -226,6 +226,19 @@ gn_conn_acpt_thrd (void * const p)
       // TODO.
     }
   }
+
+  // Test code start.
+  gn_lstnr_conf_s * lstnr_conf = lstnr_conf_list.head;
+  for (uint16_t i = 0; i < lstnr_conf_list.len; i++) {
+    gn_lstnr_conf_s * next_lstnr_conf = lstnr_conf->next;
+
+    close (lstnr_conf->fd);
+    lstnr_conf->fd = -1;
+
+    free (lstnr_conf);
+    lstnr_conf = next_lstnr_conf;
+  }
+  // Test code end.
 
   conn_acpt_thrd_conf->state = CONN_ACPT_THRD_STOPPED;
 
