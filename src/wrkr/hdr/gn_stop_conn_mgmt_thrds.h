@@ -3,6 +3,8 @@
 
 #include <wrkr/hdr/gn_wrkr_conf_s.h>
 
+#include <stdlib.h>
+
 // TODO: Maybe add cold attribute.
 void
 gn_conn_mgmt_thrd_conf_list_remove (gn_conn_mgmt_thrd_conf_list_s * const,
