@@ -28,6 +28,16 @@ gn_start_conn_mgmt_thrds (gn_wrkr_conf_s * const wrkr_conf)
     }
 
     gn_conn_mgmt_thrd_conf_init (conn_mgmt_thrd_conf);
+
+    // TODO. Test block to add 4 new-connection lists.
+    for (uint8_t j = 0; j < 4; j++) {
+      gn_new_conn_list_s * const new_conn_list = malloc (sizeof (gn_new_conn_list_s));
+      if (new_conn_list != NULL) {
+        gn_new_conn_list_init (new_conn_list);
+        gn_new_conn_list_list_push_back (&conn_mgmt_thrd_conf->new_conn_list_list, new_conn_list);
+      }
+    }
+
     printf ("Starting connection management thread (conf ptr %p)... ", conn_mgmt_thrd_conf); // TODO: Remove.
     const int rpthread_create = pthread_create (&conn_mgmt_thrd_conf->thrd_id, NULL, gn_conn_mgmt_thrd, conn_mgmt_thrd_conf);
     switch (rpthread_create) {
@@ -48,6 +58,7 @@ gn_start_conn_mgmt_thrds (gn_wrkr_conf_s * const wrkr_conf)
 
     if (conn_mgmt_thrd_conf == NULL) continue;
     // TODO: Free conn_mgmt_thrd_conf members.
+    // TODO: &conn_mgmt_thrd_conf->new_conn_list_list not emptied.
     free (conn_mgmt_thrd_conf);
     conn_mgmt_thrd_conf = NULL;
   }

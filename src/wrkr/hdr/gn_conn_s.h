@@ -5,6 +5,10 @@
 
 typedef struct gn_conn_s gn_conn_s;
 
+/*
+ * TODO: Add description.
+ */
+
 struct gn_conn_s
 {
   int               fd;
