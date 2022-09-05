@@ -3,6 +3,7 @@
 
 #include <wrkr/hdr/gn_conn_s.h>
 
+#include <stdbool.h>
 #include <stddef.h>
 
 struct gn_conn_list_s
