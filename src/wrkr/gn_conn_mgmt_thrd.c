@@ -10,7 +10,7 @@ void *
 gn_conn_mgmt_thrd (void * const p)
 {
   if (p == NULL) {
-    error_at_line (0, 0, __FILE__, __LINE__, "gn_conn_mgmt_thrd() parameter p is NULL"); // TODO: Remove.
+    error_at_line (0, 0, __FILE__, __LINE__, "gn_conn_mgmt_thrd() parameter 'p' is NULL"); // TODO: Remove.
     return NULL; // TODO: Log error. Maybe stop process.
   }
 
@@ -23,8 +23,11 @@ gn_conn_mgmt_thrd (void * const p)
   while (true) {
     gn_conn_s * conn = conn_list.head;
     while (conn != NULL) {
-      
+      conn = conn->next;
     }
+
+    // TODO: Don't accept connections if thread stop requested.
+    gn_get_new_conns (&conn_mgmt_thrd_conf->new_conn_list_list, &conn_list);
 
     if (conn_mgmt_thrd_conf->stop) {
       if (conn_mgmt_thrd_conf->state != CONN_MGMT_THRD_STOPPING) {

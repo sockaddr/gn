@@ -7,4 +7,7 @@
 void gn_conn_list_init (gn_conn_list_s * const)
   __attribute__((nonnull));
 
+void gn_get_new_conns (gn_new_conn_list_list_s * const, gn_conn_list_s * const)
+  __attribute__((nonnull)) __attribute__((hot));
+
 #endif // GN_CONN_MGMT_THRD_H
