@@ -197,7 +197,9 @@ gn_conn_acpt_thrd (void * const p)
         strcpy (conn->daddr, daddr);
         conn->fd = raccept4;
         conn->lstnr_conf = lstnr_conf;
-        // continue;
+        if (!gn_pass_conn (conn_mgmt_thrd_conf_list, conn)) continue;
+
+        error_at_line (0, 0, __FILE__, __LINE__, "Connection wasn't passed");
       } else error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate connection structure");
 
       if (conn != NULL) {
