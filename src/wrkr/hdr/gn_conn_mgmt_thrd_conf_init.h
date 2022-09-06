@@ -5,6 +5,6 @@
 
 void
 gn_new_conn_list_list_init (gn_new_conn_list_list_s * const)
-  __attribute__((nonnull)) __attribute__((cold));
+  __attribute__((cold)) __attribute__((nonnull));
 
 #endif // GN_CONN_MGMT_THRD_CONF_INIT_H
