@@ -34,9 +34,11 @@ gn_wrkr_main (void)
   // TODO: Receive and parse worker configuration.
 
   gn_wrkr_conf_s wrkr_conf;
-  gn_wrkr_conf_init (&wrkr_conf);
-  wrkr_conf.conn_mgmt_thrd_num = 2;
+  (void)! gn_wrkr_conf_init (&wrkr_conf);
+
+  // TODO: Maybe use functions to validate.
   wrkr_conf.conn_acpt_thrd_num = 4;
+  wrkr_conf.conn_mgmt_thrd_num = 2;
 
   // TODO: Don't start connection acceptance threads if no management threads started.
   gn_start_conn_mgmt_thrds (&wrkr_conf); // Start connection management threads.

@@ -4,11 +4,15 @@
  * TODO: Add description.
  */
 
-void
+bool
 gn_wrkr_conf_init (gn_wrkr_conf_s * const conf)
 {
-  conf->conn_mgmt_thrd_num = 1;
+  if (conf == NULL) return true;
+
+  (void)! gn_conn_acpt_thrd_conf_list_init (&conf->conn_acpt_thrd_conf_list);
   conf->conn_acpt_thrd_num = 1;
-  gn_conn_acpt_thrd_conf_list_init (&conf->conn_acpt_thrd_conf_list);
-  gn_conn_mgmt_thrd_conf_list_init (&conf->conn_mgmt_thrd_conf_list);
+  (void)! gn_conn_mgmt_thrd_conf_list_init (&conf->conn_mgmt_thrd_conf_list);
+  conf->conn_mgmt_thrd_num = 1;
+
+  return false;
 }
