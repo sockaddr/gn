@@ -185,7 +185,7 @@ gn_conn_acpt_thrd (void * const p)
         goto close_raccept4;
       }
 
-      printf ("Connection from [%s]:%i to [%s] / [%s]:%i\n\n", saddr, sport, lstnr_conf->addr, daddr, lstnr_conf->port);
+      printf ("[%i] Connection from [%s]:%i to [%s] / [%s]:%i\n\n", getpid (), saddr, sport, lstnr_conf->addr, daddr, lstnr_conf->port);
 
       gn_conn_s * const conn = malloc (sizeof (gn_conn_s));
       if (conn != NULL) {
