@@ -34,8 +34,8 @@ gn_start_conn_mgmt_thrds (gn_wrkr_conf_s * const wc)
 
     if (!gn_start_conn_mgmt_thrd (wc, tc)) continue;
 
-    // TODO: Free conn_mgmt_thrd_conf members.
-    // TODO: &conn_mgmt_thrd_conf->new_conn_list_list not emptied.
+    // TODO: Free tc members.
+    // TODO: &tc->new_conn_list_list not emptied.
     free (tc);
     tc = NULL;
   }
