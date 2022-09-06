@@ -43,26 +43,34 @@ gn_wrkr_main (void)
   wrkr_conf.start_wout_conn_mgmt_thrds = true;
 
   gn_start_conn_mgmt_thrds (&wrkr_conf); // Start connection management threads.
-  if (wrkr_conf.conn_mgmt_thrd_conf_list.len > 0 || wrkr_conf.start_wout_conn_mgmt_thrds) {
-    gn_start_conn_acpt_thrds (&wrkr_conf); // Start connection acceptance threads.
-    if (wrkr_conf.conn_acpt_thrd_conf_list.len > 0 || wrkr_conf.start_wout_conn_acpt_thrds) {
+  if (wrkr_conf.conn_mgmt_thrd_conf_list.len == 0 && !wrkr_conf.start_wout_conn_mgmt_thrds) {
+    error_at_line (0, 0, __FILE__, __LINE__, "Can't start without connection management threads");
+    goto lbl_err_no_cmts;
+  }
 
-      while (true) { // Main worker loop.
-        // TODO: Remove block below.
-        if (sigint_rcvd) {
-          printf ("Received SIGINT.\n");
-          break;
-        }
+  gn_start_conn_acpt_thrds (&wrkr_conf); // Start connection acceptance threads.
+  if (wrkr_conf.conn_acpt_thrd_conf_list.len == 0 && !wrkr_conf.start_wout_conn_acpt_thrds) {
+    error_at_line (0, 0, __FILE__, __LINE__, "Can't start without connection acceptance threads");
+    goto lbl_err_no_cats;
+  }
 
-        sleep (1); // TODO: Remove.
-      }
+  while (true) { // Main worker loop.
+    // TODO: Remove block below.
+    if (sigint_rcvd) {
+      printf ("Received SIGINT.\n");
+      break;
+    }
 
-      /* Stop acceptance threads first because gn_stop_conn_mgmt_thrds() will empty the conn_mgmt_thrd_conf_list and
-       * this list is used by connection acceptance threads. First stop the threads using the list, then empty it.
-       */
-      gn_stop_conn_acpt_thrds (&wrkr_conf); // Stop connection acceptance threads.
-    } else error_at_line (0, 0, __FILE__, __LINE__, "Can't start without connection acceptance threads");
+    sleep (1); // TODO: Remove.
+  }
 
-    gn_stop_conn_mgmt_thrds (&wrkr_conf); // Stop connection management threads.
-  } else error_at_line (0, 0, __FILE__, __LINE__, "Can't start without connection management threads");
+  /* Stop acceptance threads first because gn_stop_conn_mgmt_thrds() will empty the conn_mgmt_thrd_conf_list and
+   * this list is used by connection acceptance threads. First stop the threads using the list, then empty it.
+   */
+  gn_stop_conn_acpt_thrds (&wrkr_conf); // Stop connection acceptance threads.
+
+  lbl_err_no_cats:
+  gn_stop_conn_mgmt_thrds (&wrkr_conf); // Stop connection management threads.
+
+  lbl_err_no_cmts: ; // TODO: Remove semicolon.
 }
