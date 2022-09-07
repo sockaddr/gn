@@ -1,5 +1,4 @@
-#define PROC_PATH_SZ 32
-#define SELF_PATH_SZ 65536
+#include <mstr/hdr/gn_self_path.h>
 
 char *
 gn_self_path (uint8_t * const err)

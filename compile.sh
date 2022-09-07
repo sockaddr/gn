@@ -10,6 +10,9 @@ gcc \
 src/comn/main.c \
 \
 src/mstr/gn_mstr_main.c \
+src/mstr/gn_self_path.c \
+src/mstr/gn_start_wrkr.c \
+src/mstr/gn_start_wrkrs.c \
 \
 src/wrkr/gn_conn_acpt_thrd.c \
 src/wrkr/gn_conn_acpt_thrd_conf_init.c \

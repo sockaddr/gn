@@ -1,3 +1,5 @@
+#include <mstr/hdr/gn_start_wrkr.h>
+
 void
 gn_start_wrkr (char * const self_path)
 {
