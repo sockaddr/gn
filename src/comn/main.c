@@ -113,11 +113,18 @@ gn_mstr_main (void)
 int
 main (const int argc, const char * const * const argv)
 {
-  // To silence compiler error "unused parameter argc/argv"
-  if (argc < 0 && argv) {} // TODO: Remove.
+  bool worker = false; // If false the process will run as master, if true, as a worker.
 
-  if (argc == 2 && strcmp (argv[1], "--worker") == 0) gn_wrkr_main ();
-  else gn_mstr_main ();
+  for (int argi = 1; argi < argc; argi++) {
+    if (!strncmp (argv[argi], "--worker", strlen ("--worker"))) worker = true;
+    else {
+      error_at_line (0, 0, __FILE__, __LINE__, "Unexpected argument \"%s\"", argv[argi]);
+      return 1;
+    }
+  }
+
+  if (!worker) gn_mstr_main ();
+  else gn_wrkr_main ();
 
   return 0; // TODO: Return a variable.
 }
