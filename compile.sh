@@ -9,6 +9,8 @@ gcc \
 \
 src/comn/main.c \
 \
+src/mstr/gn_mstr_main.c \
+\
 src/wrkr/gn_conn_acpt_thrd.c \
 src/wrkr/gn_conn_acpt_thrd_conf_init.c \
 src/wrkr/gn_conn_acpt_thrd_conf_list_init.c \
