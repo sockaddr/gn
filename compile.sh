@@ -9,6 +9,7 @@ gcc \
 \
 src/comn/main.c \
 \
+src/mstr/gn_mstr_conf_init.c \
 src/mstr/gn_mstr_main.c \
 src/mstr/gn_self_path.c \
 src/mstr/gn_start_wrkr.c \
