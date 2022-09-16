@@ -8,7 +8,11 @@ gcc \
 -D_GNU_SOURCE \
 \
 src/comn/main.c \
+src/comn/gn_lstnr_conf_init.c \
+src/comn/gn_lstnr_conf_list_init.c \
+src/comn/gn_lstnr_conf_list_push_back.c \
 \
+src/mstr/gn_create_lstnr.c \
 src/mstr/gn_mstr_conf_init.c \
 src/mstr/gn_mstr_main.c \
 src/mstr/gn_self_path.c \

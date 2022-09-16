@@ -1,7 +1,7 @@
 #ifndef GN_CONN_S_H
 #define GN_CONN_S_H
 
-#include <wrkr/hdr/gn_lstnr_conf_s.h>
+#include <comn/hdr/gn_lstnr_conf_s.h>
 
 typedef struct gn_conn_s gn_conn_s;
 
