@@ -13,9 +13,14 @@ gn_mstr_main (void)
   mstr_conf.self_path = gn_self_path (NULL);
   if (mstr_conf.self_path == NULL) return;
 
-  mstr_conf.wrkrs_num = 1;
+  mstr_conf.wrkrs_num = 2;
 
   // TODO: Load master config.
+
+  gn_lstnr_conf_list_s lstnr_conf_list;
+  gn_lstnr_conf_list_init (&lstnr_conf_list);
+  gn_create_lstnr (&lstnr_conf_list, "0.0.0.0", 8080);
+  gn_create_lstnr (&lstnr_conf_list, "192.168.2.2", 8081);
 
   gn_start_wrkrs (&mstr_conf);
 
