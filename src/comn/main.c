@@ -31,8 +31,9 @@ main (const int argc, const char * const * const argv)
     }
   }
 
-  if (!worker) gn_mstr_main ();
-  else gn_wrkr_main ();
+  int ret = 0;
+  if (!worker) ret = gn_mstr_main ();
+  else gn_wrkr_main (); // TODO: Place return value in 'ret'
 
-  return 0; // TODO: Return a variable.
+  return ret;
 }

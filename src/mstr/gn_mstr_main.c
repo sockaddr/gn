@@ -4,7 +4,7 @@
  * TODO: Add description.
  */
 
-void
+uint8_t
 gn_mstr_main (void)
 {
   gn_mstr_cfg_s mc;
@@ -12,11 +12,10 @@ gn_mstr_main (void)
 
   uint8_t gn_self_path_err = 0; // TODO: Maybe do something with this variable.
   mc.self_path = gn_self_path (&gn_self_path_err);
-  if (mc.self_path == NULL) return;
-
-  mc.wrkrs_num = 2;
+  if (mc.self_path == NULL) return 1;
 
   // TODO: Load master config.
+  mc.wrkrs_num = 2;
 
   gn_lstnr_conf_list_s lstnr_conf_list;
   gn_lstnr_conf_list_init (&lstnr_conf_list);
@@ -30,4 +29,5 @@ gn_mstr_main (void)
   }
 
   free (mc.self_path);
+  return 0;
 }
