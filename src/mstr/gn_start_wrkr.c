@@ -20,18 +20,18 @@ gn_start_wrkr (char * const self_path, gn_lstnr_conf_list_s * const lstnr_conf_l
     case 0: { // Child
       if (dup2 (sp[0], STDIN_FILENO) == -1) {
         error_at_line (0, errno, __FILE__, __LINE__, "dup2() failed");
-        goto chld_end;
+        goto lbl_chld_end;
       }
       if (dup2 (sp[0], STDOUT_FILENO) == -1) {
         error_at_line (0, errno, __FILE__, __LINE__, "dup2() failed");
-        goto chld_end;
+        goto lbl_chld_end;
       }
 
       char * const argv[3] = {self_path, "--worker", NULL};
       execv (self_path, argv);
       error_at_line (0, errno, __FILE__, __LINE__, "execv() failed");
 
-      chld_end:
+      lbl_chld_end:
       exit (1);
     }
     case -1: {
@@ -52,12 +52,12 @@ gn_start_wrkr (char * const self_path, gn_lstnr_conf_list_s * const lstnr_conf_l
         // Check if error occured.
         if (rsnprintf < 0) {
           error_at_line (0, errno, __FILE__, __LINE__, "snprintf() error %i", rsnprintf);
-          goto prnt_end;
+          goto lbl_prnt_end;
         }
         // Check if output was truncated.
         if ((size_t)rsnprintf >= send_buf_sz) {
           error_at_line (0, 0, __FILE__, __LINE__, "snprintf() output truncated");
-          goto prnt_end;
+          goto lbl_prnt_end;
         }
 
         const ssize_t rsend = send (sp[1], send_buf, strlen (send_buf), SOCK_NONBLOCK);
@@ -110,7 +110,7 @@ gn_start_wrkr (char * const self_path, gn_lstnr_conf_list_s * const lstnr_conf_l
         error_at_line (0, errno, __FILE__, __LINE__, "send() failed");
       }
 
-      prnt_end:
+      lbl_prnt_end:
       return;
     }
   }

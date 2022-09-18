@@ -16,7 +16,7 @@ gn_create_lstnr (gn_lstnr_conf_list_s * const list, const char * const addr, con
   const int rsocket = socket (AF_INET, SOCK_CLOEXEC | SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
   if (rsocket < 0) {
     error_at_line (0, errno, __FILE__, __LINE__, "Failed to create server socket for [%s]:%i.", addr, port);
-    goto end;
+    goto lbl_end;
   }
 
   struct sockaddr_in sin;
@@ -28,29 +28,29 @@ gn_create_lstnr (gn_lstnr_conf_list_s * const list, const char * const addr, con
   int reuseaddr = 1;
   if (setsockopt (rsocket, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof (int)) != 0) {
     error_at_line (0, errno, __FILE__, __LINE__, "Failed to set SO_REUSEADDR option");
-    goto end;
+    goto lbl_end;
   }
 
   int reuseport = 1;
   if (setsockopt (rsocket, SOL_SOCKET, SO_REUSEPORT, &reuseport, sizeof (int)) != 0) {
     error_at_line (0, errno, __FILE__, __LINE__, "Failed to set SO_REUSEPORT option");
-    goto end;
+    goto lbl_end;
   }
 
   if (bind (rsocket, (struct sockaddr *)&sin, sizeof (sin)) != 0) {
     error_at_line (0, errno, __FILE__, __LINE__, "Failed to bind to [%s]:%i", conf->addr, conf->port);
-    goto end;
+    goto lbl_end;
   }
 
   if (listen (rsocket, SOMAXCONN) != 0) {
     error_at_line (0, errno, __FILE__, __LINE__, "Failed to listen on [%s]:%i", conf->addr, conf->port);
-    goto end;
+    goto lbl_end;
   }
 
   conf->fd = rsocket;
   (void)! gn_lstnr_conf_list_push_back (list, conf);
   return;
 
-  end:
+  lbl_end:
   free (conf);
 }

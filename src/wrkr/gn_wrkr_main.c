@@ -189,5 +189,15 @@ gn_wrkr_main (void)
   lbl_err_no_cats:
   gn_stop_conn_mgmt_thrds (&wrkr_conf); // Stop connection management threads.
 
-  lbl_err_no_cmts: ; // TODO: Remove semicolon.
+  lbl_err_no_cmts: ;
+  gn_lstnr_conf_s * lstnr_conf = lstnr_conf_list.head;
+  for (uint16_t i = 0; i < lstnr_conf_list.len; i++) {
+    gn_lstnr_conf_s * next_lstnr_conf = lstnr_conf->next;
+
+    close (lstnr_conf->fd);
+    lstnr_conf->fd = -1;
+
+    free (lstnr_conf);
+    lstnr_conf = next_lstnr_conf;
+  }
 }

@@ -10,13 +10,13 @@ gn_self_path (uint8_t * const err)
   if (rsnprintf < 0) {
     error_at_line (0, 0, __FILE__, __LINE__, "snprintf() returned %i", rsnprintf);
     if (err != NULL) *err = 1;
-    goto end;
+    goto lbl_end;
   }
 
   if ((size_t)rsnprintf >= PROC_PATH_SZ) {
     error_at_line (0, 0, __FILE__, __LINE__, "snprintf() returned %i", rsnprintf);
     if (err != NULL) *err = 2;
-    goto end;
+    goto lbl_end;
   }
 
 
@@ -26,13 +26,13 @@ gn_self_path (uint8_t * const err)
   if (rreadlink < 0) {
     error_at_line (0, errno, __FILE__, __LINE__, "readlink() returned %li", rreadlink);
     if (err != NULL) *err = 3;
-    goto end;
+    goto lbl_end;
   }
   printf ("rreadlink() returned %li\n", rreadlink);
   if (rreadlink == SELF_PATH_SZ) {
     error_at_line (0, 0, __FILE__, __LINE__, "readlink() returned %li", rreadlink);
     if (err != NULL) *err = 4;
-    goto end;
+    goto lbl_end;
   }
 
   const size_t self_path_tmp_len = (size_t)rreadlink;
@@ -43,12 +43,12 @@ gn_self_path (uint8_t * const err)
   if (self_path == NULL) {
     error_at_line (0, 0, __FILE__, __LINE__, "malloc(%li) failed", self_path_sz);
     if (err != NULL) *err = 5;
-    goto end;
+    goto lbl_end;
   }
 
   strncpy (self_path, self_path_tmp, self_path_sz);
   return self_path;
 
-  end: ;
+  lbl_end: ;
   return NULL;
 }

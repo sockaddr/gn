@@ -55,7 +55,7 @@ gn_conn_acpt_thrd (void * const p)
       memset (saddr, 0, sizeof (saddr));
       if (inet_ntop (AF_INET, &sin.sin_addr, saddr, INET_ADDRSTRLEN) == NULL) {
         error_at_line (0, errno, __FILE__, __LINE__, "inet_ntop() failed");
-        goto close_raccept4;
+        goto lbl_close_raccept4;
       }
       const uint16_t sport = htons (sin.sin_port);
 
@@ -64,14 +64,14 @@ gn_conn_acpt_thrd (void * const p)
       memset (&getsockname_sin, 0, sizeof_getsockname_sin);
       if (getsockname (raccept4, (struct sockaddr *)&getsockname_sin, (socklen_t *)&sizeof_getsockname_sin) != 0) {
         error_at_line (0, errno, __FILE__, __LINE__, "getsockname() failed");
-        goto close_raccept4;
+        goto lbl_close_raccept4;
       }
 
       char daddr[INET_ADDRSTRLEN];
       memset (daddr, 0, sizeof (daddr));
       if (inet_ntop (AF_INET, &getsockname_sin.sin_addr, daddr, INET_ADDRSTRLEN) == NULL) {
         error_at_line (0, errno, __FILE__, __LINE__, "inet_ntop() failed");
-        goto close_raccept4;
+        goto lbl_close_raccept4;
       }
 
       error_at_line (0, 0, "", 0, "[%i] Connection from [%s]:%i to [%s] / [%s]:%i\n\n", getpid (), saddr, sport, lstnr_conf->addr, daddr, lstnr_conf->port);
@@ -97,7 +97,7 @@ gn_conn_acpt_thrd (void * const p)
         free (conn);
       }
 
-      close_raccept4:
+      lbl_close_raccept4:
       // TODO: Loop close() if allowed by user in configuration file. Default: don't loop.
       if (close (raccept4) != 0) {
         error_at_line (0, errno, __FILE__, __LINE__, "Failed to close client socket %i", raccept4);
@@ -118,19 +118,6 @@ gn_conn_acpt_thrd (void * const p)
       // TODO.
     }
   }
-
-  // Test code start.
-  gn_lstnr_conf_s * lstnr_conf = lstnr_conf_list->head;
-  for (uint16_t i = 0; i < lstnr_conf_list->len; i++) {
-    gn_lstnr_conf_s * next_lstnr_conf = lstnr_conf->next;
-
-    close (lstnr_conf->fd);
-    lstnr_conf->fd = -1;
-
-    free (lstnr_conf);
-    lstnr_conf = next_lstnr_conf;
-  }
-  // Test code end.
 
   conn_acpt_thrd_conf->state = CONN_ACPT_THRD_STOPPED;
 
