@@ -7,13 +7,13 @@
 void
 gn_mstr_main (void)
 {
-  gn_mstr_cfg_s mstr_conf;
-  gn_mstr_conf_init (&mstr_conf);
+  gn_mstr_cfg_s mc;
+  gn_mstr_cfg_ini (&mc);
 
-  mstr_conf.self_path = gn_self_path (NULL);
-  if (mstr_conf.self_path == NULL) return;
+  mc.self_path = gn_self_path (NULL);
+  if (mc.self_path == NULL) return;
 
-  mstr_conf.wrkrs_num = 2;
+  mc.wrkrs_num = 2;
 
   // TODO: Load master config.
 
@@ -22,11 +22,11 @@ gn_mstr_main (void)
   gn_create_lstnr (&lstnr_conf_list, "0.0.0.0", 8080);
   gn_create_lstnr (&lstnr_conf_list, "192.168.2.2", 8081);
 
-  gn_start_wrkrs (&mstr_conf, &lstnr_conf_list);
+  gn_start_wrkrs (&mc, &lstnr_conf_list);
 
   while (true) { // Main master loop.
     sleep (1);
   }
 
-  free (mstr_conf.self_path);
+  free (mc.self_path);
 }
