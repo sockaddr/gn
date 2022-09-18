@@ -22,7 +22,7 @@ gn_mstr_main (void)
   gn_create_lstnr (&lstnr_conf_list, "0.0.0.0", 8080);
   gn_create_lstnr (&lstnr_conf_list, "192.168.2.2", 8081);
 
-  gn_start_wrkrs (&mstr_conf);
+  gn_start_wrkrs (&mstr_conf, &lstnr_conf_list);
 
   while (true) { // Main master loop.
     sleep (1);
