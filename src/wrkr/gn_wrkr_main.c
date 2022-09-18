@@ -31,6 +31,37 @@ gn_wrkr_main (void)
     error_at_line (0, errno, __FILE__, __LINE__, "Failed to register SIGINT handler");
   }
 
+  bool recv_loop = true;
+  while (recv_loop) {
+
+    const size_t recv_buf_sz = 128;
+    char recv_buf[recv_buf_sz];
+    const ssize_t rrecv = recv (STDIN_FILENO, recv_buf, recv_buf_sz - 1, SOCK_NONBLOCK);
+    switch (rrecv) {
+      case 0: {
+        error_at_line (0, 0, __FILE__, __LINE__, "Master disconnected");
+        recv_loop = false;
+        break;
+      }
+      case -1: {
+        error_at_line (0, errno, __FILE__, __LINE__, "Worker recv() failed");
+        recv_loop = false;
+        break;
+      }
+      default: {
+        const size_t recv_buf_len = (size_t)rrecv;
+        recv_buf[recv_buf_len] = '\0';
+        if (recv_buf[0] == '/') {
+          recv_loop = false;
+          break;
+        }
+
+        // Not an error.
+        error_at_line (0, 0, "", 0, "%i rcvd from master (%li) \"%s\"\n", getpid (), recv_buf_len, recv_buf);
+      }
+    }
+  }
+
   // TODO: Receive and parse worker configuration.
 
   gn_wrkr_conf_s wrkr_conf;
