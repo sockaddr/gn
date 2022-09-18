@@ -2,7 +2,7 @@
 #define GN_START_WRKRS_H
 
 #include <comn/hdr/gn_lstnr_conf_list_s.h>
-#include <mstr/hdr/gn_mstr_conf_s.h>
+#include <mstr/hdr/gn_mstr_cfg_s.h>
 
 #include <stdbool.h>
 #include <stdint.h>

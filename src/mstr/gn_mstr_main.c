@@ -7,7 +7,7 @@
 void
 gn_mstr_main (void)
 {
-  gn_mstr_conf_s mstr_conf;
+  gn_mstr_cfg_s mstr_conf;
   gn_mstr_conf_init (&mstr_conf);
 
   mstr_conf.self_path = gn_self_path (NULL);
