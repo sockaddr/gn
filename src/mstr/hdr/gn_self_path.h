@@ -2,8 +2,6 @@
 #define GN_SELF_PATH_H
 
 #include <errno.h>
-#include <error.h>
-#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>

@@ -12,10 +12,11 @@
 
 void   gn_create_lstnr (gn_lstnr_conf_list_s * const, const char * const, const uint16_t);
 void   gn_lstnr_conf_list_init (gn_lstnr_conf_list_s * const);
-char * gn_self_path (uint8_t * const);
 void   gn_start_wrkrs (gn_mstr_cfg_s * const, gn_lstnr_conf_list_s * const);
 
 void   gn_mstr_cfg_ini (gn_mstr_cfg_s * const)
   __attribute__((cold)) __attribute__((nonnull));
+char * gn_self_path (uint8_t * const)
+  __attribute__((cold)) __attribute__((nonnull)) __attribute__ ((warn_unused_result));
 
 #endif // GN_MSTR_MAIN_H

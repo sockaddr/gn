@@ -7,6 +7,8 @@
  * TODO: Add description.
  */
 
+// Check gn_mstr_cfg_ini() after modifying this struct.
+
 struct gn_mstr_cfg_s
 {
   char *  self_path; // Absolute path to the program.

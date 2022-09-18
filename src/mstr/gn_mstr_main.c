@@ -10,7 +10,8 @@ gn_mstr_main (void)
   gn_mstr_cfg_s mc;
   gn_mstr_cfg_ini (&mc);
 
-  mc.self_path = gn_self_path (NULL);
+  uint8_t gn_self_path_err = 0; // TODO: Maybe do something with this variable.
+  mc.self_path = gn_self_path (&gn_self_path_err);
   if (mc.self_path == NULL) return;
 
   mc.wrkrs_num = 2;
