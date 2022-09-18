@@ -1,7 +1,7 @@
 #ifndef GN_MSTR_CFG_S_H
 #define GN_MSTR_CFG_S_H
 
-#include <stdint.h>
+#include <comn/hdr/gn_lstnr_cfg_lst_s.h>
 
 /*
  * TODO: Add description.
@@ -11,8 +11,9 @@
 
 struct gn_mstr_cfg_s
 {
-  char *  self_path; // Absolute path to the program.
-  uint8_t wrkrs_num; // Number of worker processes to start.
+  gn_lstnr_cfg_lst_s lstnr_cfg_lst; // List of server sockets info.
+  char *             self_path; // Absolute path to the program.
+  uint8_t            wrkrs_num; // Number of worker processes to start.
 };
 
 typedef struct gn_mstr_cfg_s gn_mstr_cfg_s;

@@ -17,12 +17,10 @@ gn_mstr_main (void)
   // TODO: Load master config.
   mc.wrkrs_num = 2;
 
-  gn_lstnr_cfg_lst_s lstnr_cfg_lst;
-  gn_lstnr_cfg_lst_ini (&lstnr_cfg_lst);
-  gn_create_lstnr (&lstnr_cfg_lst, "0.0.0.0", 8080);
-  gn_create_lstnr (&lstnr_cfg_lst, "192.168.2.2", 8081);
+  gn_create_lstnr (&mc.lstnr_cfg_lst, "0.0.0.0", 8080);
+  gn_create_lstnr (&mc.lstnr_cfg_lst, "192.168.2.2", 8081);
 
-  gn_start_wrkrs (&mc, &lstnr_cfg_lst);
+  gn_start_wrkrs (&mc);
 
   while (true) { // Main master loop.
     sleep (1);

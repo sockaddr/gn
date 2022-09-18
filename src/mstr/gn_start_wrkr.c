@@ -5,7 +5,7 @@
  */
 
 void
-gn_start_wrkr (char * const self_path, gn_lstnr_cfg_lst_s * const lstnr_cfg_lst)
+gn_start_wrkr (const gn_mstr_cfg_s * const mc)
 {
   // Create socket pair to send configuration and sockets to worker process.
   int sp[2] = {-1, -1}; // TODO: Store them in worker proc entry.
@@ -27,8 +27,8 @@ gn_start_wrkr (char * const self_path, gn_lstnr_cfg_lst_s * const lstnr_cfg_lst)
         goto lbl_chld_end;
       }
 
-      char * const argv[3] = {self_path, "--worker", NULL};
-      execv (self_path, argv);
+      char * const argv[3] = {mc->self_path, "--worker", NULL};
+      execv (mc->self_path, argv);
       error_at_line (0, errno, __FILE__, __LINE__, "execv() failed");
 
       lbl_chld_end:
@@ -40,8 +40,8 @@ gn_start_wrkr (char * const self_path, gn_lstnr_cfg_lst_s * const lstnr_cfg_lst)
     }
     default: { // Parent
       // Send server socket info one by one.
-      gn_lstnr_conf_s * lstnr_conf = lstnr_cfg_lst->head;
-      for (uint8_t i = 0; i < lstnr_cfg_lst->len; lstnr_conf = lstnr_conf->next, i++) {
+      gn_lstnr_conf_s * lstnr_conf = mc->lstnr_cfg_lst.head;
+      for (uint8_t i = 0; i < mc->lstnr_cfg_lst.len; lstnr_conf = lstnr_conf->next, i++) {
         printf ("Sending #%i [%s]:%i\n", lstnr_conf->fd, lstnr_conf->addr, lstnr_conf->port);
 
         const size_t send_buf_sz = 128;

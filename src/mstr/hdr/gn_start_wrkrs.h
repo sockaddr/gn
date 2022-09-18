@@ -8,7 +8,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-bool gn_start_wrkr (char * const, gn_lstnr_cfg_lst_s * const)
+bool gn_start_wrkr (gn_mstr_cfg_s * const)
   __attribute__((cold)) __attribute__((nonnull)) __attribute__ ((warn_unused_result));
 
 #endif // GN_START_WRKRS_H

@@ -5,4 +5,7 @@
 
 #include <stddef.h>
 
+void gn_lstnr_cfg_lst_ini (gn_lstnr_cfg_lst_s * const)
+  __attribute__((cold)) __attribute__((nonnull));
+
 #endif // GN_MSTR_CFG_INI_H
