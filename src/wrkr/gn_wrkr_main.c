@@ -31,8 +31,25 @@ gn_wrkr_main (void)
     error_at_line (0, errno, __FILE__, __LINE__, "Failed to register SIGINT handler");
   }
 
+  gn_lstnr_conf_list_s lstnr_conf_list;
+  gn_lstnr_conf_list_init (&lstnr_conf_list);
+
   bool recv_loop = true;
   while (recv_loop) {
+
+    gn_lstnr_conf_s * const lstnr_conf = malloc (sizeof (gn_lstnr_conf_s));
+    if (lstnr_conf == NULL) {
+      error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate gn_lstnr_conf_s");
+      return;
+    }
+    gn_lstnr_conf_init (lstnr_conf);
+
+    char * const addr = malloc (128);
+    if (addr == NULL) {
+      error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate server socket address buffer");
+      free (lstnr_conf);
+      return;
+    }
 
     struct pollfd pfd = {
       .fd = STDIN_FILENO,
@@ -95,6 +112,34 @@ gn_wrkr_main (void)
               default: {
                 int fd = gn_recv_fd (STDIN_FILENO);
                 error_at_line (0, 0, "", 0, "Worker #%i received #%i %s", getpid (), fd, recv_buf);
+
+                // Get address
+                size_t i = 1, addr_len = 0;
+                for (; addr_len < 128 && recv_buf[i] != ']'; i++, addr_len++) {
+                  addr[addr_len] = recv_buf[i];
+                }
+                addr[addr_len] = '\0';
+
+                // Get port
+                for (; recv_buf[i] != ':'; i++);
+                i++;
+
+                char port[6];
+                size_t port_len = 0;
+                for (; port_len < 5 && recv_buf[i] != '\n'; i++, port_len++) {
+                  port[port_len] = recv_buf[i];
+                }
+                port[port_len] = '\0';
+
+                lstnr_conf->addr = addr;
+                lstnr_conf->port = atoi (port);
+                lstnr_conf->fd = fd;
+                (void)! gn_lstnr_conf_list_push_back (&lstnr_conf_list, lstnr_conf);
+
+                error_at_line (0, 0, "", 0, "fd = %i, addr (%li) = \"%s\", port = %i\n", lstnr_conf->fd ,
+                                                                                         strlen (lstnr_conf->addr),
+                                                                                         lstnr_conf->addr,
+                                                                                         lstnr_conf->port);
               }
             }
           }
