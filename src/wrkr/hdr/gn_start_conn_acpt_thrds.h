@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-void gn_conn_acpt_thrd_conf_init (gn_conn_acpt_thrd_conf_s * const, const gn_conn_mgmt_thrd_conf_list_s * const)
+void gn_conn_acpt_thrd_conf_init (gn_conn_acpt_thrd_conf_s * const, const gn_wrkr_conf_s * const)
   __attribute__((cold)) __attribute__((nonnull));
 
 bool

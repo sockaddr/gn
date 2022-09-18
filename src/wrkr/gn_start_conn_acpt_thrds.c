@@ -25,7 +25,7 @@ gn_start_conn_acpt_thrds (gn_wrkr_conf_s * const wc)
       continue;
     }
 
-    gn_conn_acpt_thrd_conf_init (tc, &wc->conn_mgmt_thrd_conf_list);
+    gn_conn_acpt_thrd_conf_init (tc, wc);
 
     if (!gn_start_conn_acpt_thrd (wc ,tc)) continue;
 

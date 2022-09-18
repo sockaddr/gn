@@ -29,7 +29,7 @@ void gn_stop_conn_mgmt_thrds (gn_wrkr_conf_s * const)
   __attribute__((cold)) __attribute__((nonnull));
 
 bool
-gn_wrkr_conf_init (gn_wrkr_conf_s * const)
+gn_wrkr_conf_init (gn_wrkr_conf_s * const, gn_lstnr_conf_list_s * const)
   __attribute__((cold)) __attribute__((nonnull)) __attribute__ ((warn_unused_result));
 
 #endif // GN_WRKR_MAIN_H

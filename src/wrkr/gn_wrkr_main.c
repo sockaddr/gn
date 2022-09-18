@@ -151,7 +151,7 @@ gn_wrkr_main (void)
   // TODO: Receive and parse worker configuration.
 
   gn_wrkr_conf_s wrkr_conf;
-  (void)! gn_wrkr_conf_init (&wrkr_conf);
+  (void)! gn_wrkr_conf_init (&wrkr_conf, &lstnr_conf_list);
 
   // TODO: Maybe use functions to validate.
   wrkr_conf.conn_acpt_thrd_num = 4;
