@@ -16,6 +16,7 @@ src/mstr/gn_create_lstnr.c \
 src/mstr/gn_mstr_conf_init.c \
 src/mstr/gn_mstr_main.c \
 src/mstr/gn_self_path.c \
+src/mstr/gn_send_fd.c \
 src/mstr/gn_start_wrkr.c \
 src/mstr/gn_start_wrkrs.c \
 \
@@ -43,6 +44,7 @@ src/wrkr/gn_new_conn_list_list_push_back.c \
 \
 src/wrkr/gn_get_new_conns.c \
 src/wrkr/gn_pass_conn.c \
+src/wrkr/gn_recv_fd.c \
 \
 src/wrkr/gn_start_conn_acpt_thrd.c \
 src/wrkr/gn_start_conn_acpt_thrds.c \

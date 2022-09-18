@@ -98,6 +98,7 @@ gn_start_wrkr (char * const self_path, gn_lstnr_conf_list_s * const lstnr_conf_l
                 const size_t recv_buf_len = (size_t)rrecv;
                 recv_buf[recv_buf_len] = '\0';
                 printf ("Received from worker #%i (%li) \"%s\"\n", rfork, recv_buf_len, recv_buf);
+                gn_send_fd (sp[1], lstnr_conf->fd);
               }
             }
           }

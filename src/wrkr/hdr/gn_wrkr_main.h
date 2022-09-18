@@ -6,6 +6,8 @@
 #include <poll.h>
 #include <sys/socket.h>
 
+int gn_recv_fd (int);
+
 void gn_start_conn_acpt_thrds (gn_wrkr_conf_s * const)
   __attribute__((cold)) __attribute__((nonnull));
 void gn_start_conn_mgmt_thrds (gn_wrkr_conf_s * const)

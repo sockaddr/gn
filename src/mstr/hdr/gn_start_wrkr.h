@@ -13,4 +13,6 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
+void gn_send_fd (const int, int);
+
 #endif // GN_START_WRKR_H

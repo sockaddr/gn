@@ -81,6 +81,22 @@ gn_wrkr_main (void)
             if (rsend < 0) {
               error_at_line (0, errno, __FILE__, __LINE__, "Worker send() failed");
             }
+
+            const int rpoll = poll (&pfd, 1, 3000);
+            switch (rpoll) {
+              case 0: {
+                error_at_line (0, 0, __FILE__, __LINE__, "Master didn't send data");
+                break;
+              }
+              case -1: {
+                error_at_line (0, errno, __FILE__, __LINE__, "Worker poll() failed");
+                break;
+              }
+              default: {
+                int fd = gn_recv_fd (STDIN_FILENO);
+                error_at_line (0, 0, "", 0, "Worker #%i received #%i %s", getpid (), fd, recv_buf);
+              }
+            }
           }
         }
       }

@@ -13,7 +13,7 @@ gn_create_lstnr (gn_lstnr_conf_list_s * const list, const char * const addr, con
   conf->addr = (char *)addr;
   conf->port = port;
 
-  const int rsocket = socket (AF_INET, SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
+  const int rsocket = socket (AF_INET, SOCK_CLOEXEC | SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
   if (rsocket < 0) {
     error_at_line (0, errno, __FILE__, __LINE__, "Failed to create server socket for [%s]:%i.", addr, port);
     goto end;
