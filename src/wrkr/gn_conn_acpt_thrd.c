@@ -29,11 +29,11 @@ gn_conn_acpt_thrd (void * const p)
   const gn_conn_mgmt_thrd_conf_list_s * const conn_mgmt_thrd_conf_list = conn_acpt_thrd_conf->conn_mgmt_thrd_conf_list;
   if (conn_mgmt_thrd_conf_list == NULL) {} // TODO: Remove.
 
-  const gn_lstnr_conf_list_s * const lstnr_conf_list = conn_acpt_thrd_conf->lstnr_conf_list;
+  const gn_lstnr_cfg_lst_s * const lstnr_cfg_lst = conn_acpt_thrd_conf->lstnr_conf_list;
 
   while (true) {
-    gn_lstnr_conf_s * lstnr_conf = lstnr_conf_list->head;
-    for (uint16_t i = 0; i < lstnr_conf_list->len; lstnr_conf = lstnr_conf->next, i++) {
+    gn_lstnr_conf_s * lstnr_conf = lstnr_cfg_lst->head;
+    for (uint16_t i = 0; i < lstnr_cfg_lst->len; lstnr_conf = lstnr_conf->next, i++) {
       struct sockaddr_in sin;
       size_t sizeof_sin = sizeof (sin);
       memset (&sin, 0, sizeof_sin);

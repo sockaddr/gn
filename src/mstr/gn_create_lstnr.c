@@ -1,7 +1,7 @@
 #include <mstr/hdr/gn_create_lstnr.h>
 
 void
-gn_create_lstnr (gn_lstnr_conf_list_s * const list, const char * const addr, const uint16_t port)
+gn_create_lstnr (gn_lstnr_cfg_lst_s * const list, const char * const addr, const uint16_t port)
 {
   gn_lstnr_conf_s * const conf = malloc (sizeof (gn_lstnr_conf_s));
   if (conf == NULL) {

@@ -5,7 +5,7 @@
  */
 
 void
-gn_start_wrkr (char * const self_path, gn_lstnr_conf_list_s * const lstnr_conf_list)
+gn_start_wrkr (char * const self_path, gn_lstnr_cfg_lst_s * const lstnr_cfg_lst)
 {
   // Create socket pair to send configuration and sockets to worker process.
   int sp[2] = {-1, -1}; // TODO: Store them in worker proc entry.
@@ -40,8 +40,8 @@ gn_start_wrkr (char * const self_path, gn_lstnr_conf_list_s * const lstnr_conf_l
     }
     default: { // Parent
       // Send server socket info one by one.
-      gn_lstnr_conf_s * lstnr_conf = lstnr_conf_list->head;
-      for (uint8_t i = 0; i < lstnr_conf_list->len; lstnr_conf = lstnr_conf->next, i++) {
+      gn_lstnr_conf_s * lstnr_conf = lstnr_cfg_lst->head;
+      for (uint8_t i = 0; i < lstnr_cfg_lst->len; lstnr_conf = lstnr_conf->next, i++) {
         printf ("Sending #%i [%s]:%i\n", lstnr_conf->fd, lstnr_conf->addr, lstnr_conf->port);
 
         const size_t send_buf_sz = 128;

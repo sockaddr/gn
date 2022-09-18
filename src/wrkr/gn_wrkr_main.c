@@ -31,7 +31,7 @@ gn_wrkr_main (void)
     error_at_line (0, errno, __FILE__, __LINE__, "Failed to register SIGINT handler");
   }
 
-  gn_lstnr_conf_list_s lstnr_conf_list;
+  gn_lstnr_cfg_lst_s lstnr_conf_list;
   gn_lstnr_conf_list_init (&lstnr_conf_list);
 
   bool recv_loop = true;
