@@ -18,7 +18,7 @@ gn_mstr_main (void)
   mc.wrkrs_num = 2;
 
   gn_lstnr_cfg_lst_s lstnr_cfg_lst;
-  gn_lstnr_conf_list_init (&lstnr_cfg_lst);
+  gn_lstnr_cfg_lst_ini (&lstnr_cfg_lst);
   gn_create_lstnr (&lstnr_cfg_lst, "0.0.0.0", 8080);
   gn_create_lstnr (&lstnr_cfg_lst, "192.168.2.2", 8081);
 

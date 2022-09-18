@@ -32,7 +32,7 @@ gn_wrkr_main (void)
   }
 
   gn_lstnr_cfg_lst_s lstnr_conf_list;
-  gn_lstnr_conf_list_init (&lstnr_conf_list);
+  gn_lstnr_cfg_lst_ini (&lstnr_conf_list);
 
   bool recv_loop = true;
   while (recv_loop) {

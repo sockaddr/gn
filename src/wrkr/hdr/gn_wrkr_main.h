@@ -9,10 +9,12 @@
 #include <string.h>
 #include <sys/socket.h>
 
+void gn_lstnr_cfg_lst_ini (gn_lstnr_cfg_lst_s * const)
+  __attribute__((cold)) __attribute__((nonnull));
+
 void gn_lstnr_conf_init (gn_lstnr_conf_s * const)
   __attribute__((cold)) __attribute__((nonnull));
 
-void gn_lstnr_conf_list_init (gn_lstnr_cfg_lst_s * const);
 bool gn_lstnr_conf_list_push_back (gn_lstnr_cfg_lst_s * const, gn_lstnr_conf_s * const)
   __attribute__((cold)) __attribute__((nonnull)) __attribute__ ((warn_unused_result));
 
@@ -28,8 +30,7 @@ void gn_stop_conn_acpt_thrds (gn_wrkr_conf_s * const)
 void gn_stop_conn_mgmt_thrds (gn_wrkr_conf_s * const)
   __attribute__((cold)) __attribute__((nonnull));
 
-bool
-gn_wrkr_conf_init (gn_wrkr_conf_s * const, gn_lstnr_cfg_lst_s * const)
+bool gn_wrkr_conf_init (gn_wrkr_conf_s * const, gn_lstnr_cfg_lst_s * const)
   __attribute__((cold)) __attribute__((nonnull)) __attribute__ ((warn_unused_result));
 
 #endif // GN_WRKR_MAIN_H
