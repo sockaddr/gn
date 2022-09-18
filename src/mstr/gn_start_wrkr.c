@@ -22,6 +22,10 @@ gn_start_wrkr (char * const self_path, gn_lstnr_conf_list_s * const lstnr_conf_l
         error_at_line (0, errno, __FILE__, __LINE__, "dup2() failed");
         goto chld_end;
       }
+      if (dup2 (sp[0], STDOUT_FILENO) == -1) {
+        error_at_line (0, errno, __FILE__, __LINE__, "dup2() failed");
+        goto chld_end;
+      }
 
       char * const argv[3] = {self_path, "--worker", NULL};
       execv (self_path, argv);
@@ -60,6 +64,49 @@ gn_start_wrkr (char * const self_path, gn_lstnr_conf_list_s * const lstnr_conf_l
         if (rsend < 0) {
           error_at_line (0, errno, __FILE__, __LINE__, "send() failed");
         }
+
+        struct pollfd pfd = {
+          .fd = sp[1],
+          .events = POLLIN | POLLRDHUP,
+          .revents = 0
+        };
+
+        const int rpoll = poll (&pfd, 1, 3000);
+        switch (rpoll) {
+          case 0: {
+            error_at_line (0, 0, __FILE__, __LINE__, "Worker didn't send data");
+            break;
+          }
+          case -1: {
+            error_at_line (0, errno, __FILE__, __LINE__, "Master poll() failed");
+            break;
+          }
+          default: {
+            const size_t recv_buf_sz = 128;
+            char recv_buf[recv_buf_sz];
+            ssize_t rrecv = recv (sp[1], recv_buf, recv_buf_sz - 1, SOCK_NONBLOCK);
+            switch (rrecv) {
+              case 0: {
+                error_at_line (0, 0, __FILE__, __LINE__, "Worker disconnected");
+                break;
+              }
+              case -1: {
+                error_at_line (0, errno, __FILE__, __LINE__, "Master recv() failed");
+                break;
+              }
+              default: {
+                const size_t recv_buf_len = (size_t)rrecv;
+                recv_buf[recv_buf_len] = '\0';
+                printf ("Received from worker #%i (%li) \"%s\"\n", rfork, recv_buf_len, recv_buf);
+              }
+            }
+          }
+        }
+      }
+
+      const ssize_t rsend = send (sp[1], "/", 1, SOCK_NONBLOCK);
+      if (rsend < 0) {
+        error_at_line (0, errno, __FILE__, __LINE__, "send() failed");
       }
 
       prnt_end:

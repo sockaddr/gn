@@ -5,6 +5,7 @@
 
 #include <errno.h>
 #include <error.h>
+#include <poll.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>

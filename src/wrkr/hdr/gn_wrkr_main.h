@@ -3,6 +3,7 @@
 
 #include <wrkr/hdr/gn_wrkr_conf_s.h>
 
+#include <poll.h>
 #include <sys/socket.h>
 
 void gn_start_conn_acpt_thrds (gn_wrkr_conf_s * const)

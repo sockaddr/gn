@@ -34,30 +34,55 @@ gn_wrkr_main (void)
   bool recv_loop = true;
   while (recv_loop) {
 
-    const size_t recv_buf_sz = 128;
-    char recv_buf[recv_buf_sz];
-    const ssize_t rrecv = recv (STDIN_FILENO, recv_buf, recv_buf_sz - 1, SOCK_NONBLOCK);
-    switch (rrecv) {
+    struct pollfd pfd = {
+      .fd = STDIN_FILENO,
+      .events = POLLIN | POLLRDHUP,
+      .revents = 0
+    };
+
+    const int rpoll = poll (&pfd, 1, 3000);
+    switch (rpoll) {
       case 0: {
-        error_at_line (0, 0, __FILE__, __LINE__, "Master disconnected");
-        recv_loop = false;
+        error_at_line (0, 0, __FILE__, __LINE__, "Master didn't send data");
         break;
       }
       case -1: {
-        error_at_line (0, errno, __FILE__, __LINE__, "Worker recv() failed");
-        recv_loop = false;
+        error_at_line (0, errno, __FILE__, __LINE__, "Worker poll() failed");
         break;
       }
       default: {
-        const size_t recv_buf_len = (size_t)rrecv;
-        recv_buf[recv_buf_len] = '\0';
-        if (recv_buf[0] == '/') {
-          recv_loop = false;
-          break;
-        }
+        const size_t recv_buf_sz = 128;
+        char recv_buf[recv_buf_sz];
 
-        // Not an error.
-        error_at_line (0, 0, "", 0, "%i rcvd from master (%li) \"%s\"\n", getpid (), recv_buf_len, recv_buf);
+        const ssize_t rrecv = recv (STDIN_FILENO, recv_buf, recv_buf_sz - 1, SOCK_NONBLOCK);
+        switch (rrecv) {
+          case 0: {
+            error_at_line (0, 0, __FILE__, __LINE__, "Master disconnected");
+            recv_loop = false;
+            break;
+          }
+          case -1: {
+            error_at_line (0, errno, __FILE__, __LINE__, "Worker recv() failed");
+            recv_loop = false;
+            break;
+          }
+          default: {
+            const size_t recv_buf_len = (size_t)rrecv;
+            recv_buf[recv_buf_len] = '\0';
+            if (recv_buf[0] == '/') {
+              recv_loop = false;
+              break;
+            }
+
+            // Not an error.
+            error_at_line (0, 0, "", 0, "%i rcvd from master (%li) \"%s\"\n", getpid (), recv_buf_len, recv_buf);
+
+            const ssize_t rsend = send (STDOUT_FILENO, recv_buf, recv_buf_len, SOCK_NONBLOCK);
+            if (rsend < 0) {
+              error_at_line (0, errno, __FILE__, __LINE__, "Worker send() failed");
+            }
+          }
+        }
       }
     }
   }
