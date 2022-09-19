@@ -1,11 +1,11 @@
-#include <comn/hdr/gn_lstnr_conf_init.h>
+#include <comn/hdr/gn_lstnr_cfg_ini.h>
 
 /*
  * TODO: Add description.
  */
 
 void
-gn_lstnr_conf_init (gn_lstnr_cfg_s * const cfg)
+gn_lstnr_cfg_ini (gn_lstnr_cfg_s * const cfg)
 {
   cfg->fd = -1;
   cfg->addr = NULL;

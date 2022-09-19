@@ -13,7 +13,7 @@ gn_create_lstnr (gn_lstnr_cfg_lst_s * const lst, const char * const addr, const 
     return 1;
   }
 
-  gn_lstnr_conf_init (cfg);
+  gn_lstnr_cfg_ini (cfg);
   cfg->addr = (char *)addr;
   cfg->port = port;
 

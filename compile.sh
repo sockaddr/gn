@@ -8,8 +8,8 @@ gcc \
 -D_GNU_SOURCE \
 \
 src/comn/main.c \
+src/comn/gn_lstnr_cfg_ini.c \
 src/comn/gn_lstnr_cfg_lst_ini.c \
-src/comn/gn_lstnr_conf_init.c \
 src/comn/gn_lstnr_conf_list_push_back.c \
 \
 src/mstr/gn_create_lstnr.c \

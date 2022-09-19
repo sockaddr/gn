@@ -37,17 +37,17 @@ gn_wrkr_main (void)
   bool recv_loop = true;
   while (recv_loop) {
 
-    gn_lstnr_cfg_s * const lstnr_conf = malloc (sizeof (gn_lstnr_cfg_s));
-    if (lstnr_conf == NULL) {
-      error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate gn_lstnr_conf_s");
+    gn_lstnr_cfg_s * const lstnr_cfg = malloc (sizeof (gn_lstnr_cfg_s));
+    if (lstnr_cfg == NULL) {
+      error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate gn_lstnr_cfg_s");
       return;
     }
-    gn_lstnr_conf_init (lstnr_conf);
+    gn_lstnr_cfg_ini (lstnr_cfg);
 
     char * const addr = malloc (128);
     if (addr == NULL) {
       error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate server socket address buffer");
-      free (lstnr_conf);
+      free (lstnr_cfg);
       return;
     }
 
@@ -131,15 +131,15 @@ gn_wrkr_main (void)
                 }
                 port[port_len] = '\0';
 
-                lstnr_conf->addr = addr;
-                lstnr_conf->port = atoi (port);
-                lstnr_conf->fd = fd;
-                (void)! gn_lstnr_conf_list_push_back (&lstnr_conf_list, lstnr_conf);
+                lstnr_cfg->addr = addr;
+                lstnr_cfg->port = atoi (port);
+                lstnr_cfg->fd = fd;
+                (void)! gn_lstnr_conf_list_push_back (&lstnr_conf_list, lstnr_cfg);
 
-                error_at_line (0, 0, "", 0, "fd = %i, addr (%li) = \"%s\", port = %i\n", lstnr_conf->fd ,
-                                                                                         strlen (lstnr_conf->addr),
-                                                                                         lstnr_conf->addr,
-                                                                                         lstnr_conf->port);
+                error_at_line (0, 0, "", 0, "fd = %i, addr (%li) = \"%s\", port = %i\n", lstnr_cfg->fd ,
+                                                                                         strlen (lstnr_cfg->addr),
+                                                                                         lstnr_cfg->addr,
+                                                                                         lstnr_cfg->port);
               }
             }
           }
@@ -190,14 +190,14 @@ gn_wrkr_main (void)
   gn_stop_conn_mgmt_thrds (&wrkr_conf); // Stop connection management threads.
 
   lbl_err_no_cmts: ;
-  gn_lstnr_cfg_s * lstnr_conf = lstnr_conf_list.head;
+  gn_lstnr_cfg_s * lstnr_cfg = lstnr_conf_list.head;
   for (uint16_t i = 0; i < lstnr_conf_list.len; i++) {
-    gn_lstnr_cfg_s * next_lstnr_conf = lstnr_conf->next;
+    gn_lstnr_cfg_s * next_lstnr_cfg = lstnr_cfg->next;
 
-    close (lstnr_conf->fd);
-    lstnr_conf->fd = -1;
+    close (lstnr_cfg->fd);
+    lstnr_cfg->fd = -1;
 
-    free (lstnr_conf);
-    lstnr_conf = next_lstnr_conf;
+    free (lstnr_cfg);
+    lstnr_cfg = next_lstnr_cfg;
   }
 }

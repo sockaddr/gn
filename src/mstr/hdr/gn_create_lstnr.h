@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
-void gn_lstnr_conf_init (gn_lstnr_cfg_s * const)
+void gn_lstnr_cfg_ini (gn_lstnr_cfg_s * const)
   __attribute__((cold)) __attribute__((nonnull));
 
 bool gn_lstnr_conf_list_push_back (gn_lstnr_cfg_lst_s * const, gn_lstnr_cfg_s * const)
