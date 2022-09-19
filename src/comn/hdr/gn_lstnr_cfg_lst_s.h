@@ -7,6 +7,8 @@
  * TODO: Add description.
  */
 
+// Check gn_lstnr_cfg_lst_ini() after modifying this struct.
+
 struct gn_lstnr_cfg_lst_s
 {
   gn_lstnr_conf_s * head;

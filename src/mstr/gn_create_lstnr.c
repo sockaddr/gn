@@ -1,56 +1,67 @@
 #include <mstr/hdr/gn_create_lstnr.h>
 
-void
-gn_create_lstnr (gn_lstnr_cfg_lst_s * const list, const char * const addr, const uint16_t port)
+/*
+ * TODO: Add description.
+ */
+
+uint8_t
+gn_create_lstnr (gn_lstnr_cfg_lst_s * const lst, const char * const addr, const uint16_t port)
 {
-  gn_lstnr_conf_s * const conf = malloc (sizeof (gn_lstnr_conf_s));
-  if (conf == NULL) {
-    error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate listener configuration for [%s]:%i", addr, port);
-    return;
+  gn_lstnr_conf_s * const cfg = malloc (sizeof (gn_lstnr_conf_s));
+  if (cfg == NULL) {
+    fprintf (stderr, "Failed to allocate listener configuration for [%s]:%i. %s\n", addr, port, strerror (errno));
+    return 1;
   }
 
-  gn_lstnr_conf_init (conf);
-  conf->addr = (char *)addr;
-  conf->port = port;
+  gn_lstnr_conf_init (cfg);
+  cfg->addr = (char *)addr;
+  cfg->port = port;
 
-  const int rsocket = socket (AF_INET, SOCK_CLOEXEC | SOCK_STREAM | SOCK_NONBLOCK, IPPROTO_TCP);
+  uint8_t ret = 0;
+  const int rsocket = socket (AF_INET, SOCK_CLOEXEC | SOCK_NONBLOCK | SOCK_STREAM, IPPROTO_TCP);
   if (rsocket < 0) {
-    error_at_line (0, errno, __FILE__, __LINE__, "Failed to create server socket for [%s]:%i.", addr, port);
+    fprintf (stderr, "Failed to create server socket for [%s]:%i. %s\n", addr, port, strerror (errno));
+    ret = 2;
     goto lbl_end;
   }
 
   struct sockaddr_in sin;
   memset (&sin, 0, sizeof (sin));
-  sin.sin_addr.s_addr = inet_addr (conf->addr);
+  sin.sin_addr.s_addr = inet_addr (cfg->addr); // TODO: Check cfg->addr is valid.
   sin.sin_family = AF_INET;
-  sin.sin_port = htons (conf->port);
+  sin.sin_port = htons (cfg->port); // TODO: Check cfg->port is valid.
 
   int reuseaddr = 1;
   if (setsockopt (rsocket, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof (int)) != 0) {
-    error_at_line (0, errno, __FILE__, __LINE__, "Failed to set SO_REUSEADDR option");
+    fprintf (stderr, "Failed to set SO_REUSEADDR option. %s\n", strerror (errno));
+    ret = 3;
     goto lbl_end;
   }
 
   int reuseport = 1;
   if (setsockopt (rsocket, SOL_SOCKET, SO_REUSEPORT, &reuseport, sizeof (int)) != 0) {
-    error_at_line (0, errno, __FILE__, __LINE__, "Failed to set SO_REUSEPORT option");
+    fprintf (stderr, "Failed to set SO_REUSEPORT option. %s\n", strerror (errno));
+    ret = 4;
     goto lbl_end;
   }
 
   if (bind (rsocket, (struct sockaddr *)&sin, sizeof (sin)) != 0) {
-    error_at_line (0, errno, __FILE__, __LINE__, "Failed to bind to [%s]:%i", conf->addr, conf->port);
+    fprintf (stderr, "Failed to bind to [%s]:%i. %s\n", cfg->addr, cfg->port, strerror (errno));
+    ret = 5;
     goto lbl_end;
   }
 
-  if (listen (rsocket, SOMAXCONN) != 0) {
-    error_at_line (0, errno, __FILE__, __LINE__, "Failed to listen on [%s]:%i", conf->addr, conf->port);
+  if (listen (rsocket, SOMAXCONN) != 0) { // TODO: Allow user to change SOMAXCONN.
+    fprintf (stderr, "Failed to listen on [%s]:%i. %s\n", cfg->addr, cfg->port, strerror (errno));
+    ret = 6;
     goto lbl_end;
   }
 
-  conf->fd = rsocket;
-  (void)! gn_lstnr_conf_list_push_back (list, conf);
-  return;
+  cfg->fd = rsocket;
+  (void)! gn_lstnr_conf_list_push_back (lst, cfg); // TODO: Check error.
+  return ret;
 
   lbl_end:
-  free (conf);
+  free (cfg);
+  return ret;
 }
