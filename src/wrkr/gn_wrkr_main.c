@@ -2,6 +2,7 @@
 
 #include <errno.h>
 #include <error.h>
+#include <signal.h>
 #include <unistd.h>
 
 /*
@@ -11,6 +12,8 @@
 void // TODO: Maybe return a value.
 gn_wrkr_main (void)
 {
+  signal (SIGINT, SIG_IGN);
+  signal (SIGPIPE, SIG_IGN);
   gn_lstnr_cfg_lst_s lstnr_conf_list;
   gn_lstnr_cfg_lst_ini (&lstnr_conf_list);
 
@@ -151,7 +154,41 @@ gn_wrkr_main (void)
     goto lbl_err_no_cats;
   }
 
-  while (true) { // Main worker loop.
+  bool loop = true;
+  while (loop) { // Main worker loop.
+    struct pollfd pfd[2];
+    pfd[0] = (struct pollfd){
+      .fd = STDIN_FILENO,
+      .events = POLLIN | POLLRDHUP,
+      .revents = 0
+    };
+    pfd[1] = (struct pollfd){
+      .fd = STDOUT_FILENO,
+      .events = POLLOUT | POLLRDHUP,
+      .revents = 0
+    };
+
+    const int rpoll = poll (pfd, 2, 0);
+    switch (rpoll) {
+      case 0: {
+        break;
+      }
+      case -1: {
+        error_at_line (0, errno, __FILE__, __LINE__, "Main loop poll() failed");
+        break;
+      }
+      default: {
+        for (uint8_t pfd_i = 0; pfd_i < 2; pfd_i++) {
+          if (pfd[pfd_i].revents & POLLRDHUP) {
+            if (pfd_i == 0) error_at_line (0, 0, "", 0, "STDIN closed");
+            else error_at_line (0, 0, "", 0, "STDOUT closed");
+            error_at_line (0, 0, "", 0, "Stopping worker %i", getpid ());
+            loop = false;
+          }
+        }
+      }
+    }
+
     sleep (1); // TODO: Remove.
   }
 
