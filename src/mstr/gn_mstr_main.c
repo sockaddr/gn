@@ -20,6 +20,7 @@ gn_mstr_main (void)
   // Test code, start
   (void)! gn_create_lstnr (&mc.lstnr_cfg_lst, "0.0.0.0", 8080);
   (void)! gn_create_lstnr (&mc.lstnr_cfg_lst, "192.168.2.2", 8081);
+  (void)! gn_create_lstnr (&mc.lstnr_cfg_lst, "127.0.0.1", 8082);
   // Test code, end
 
   gn_start_wrkrs (&mc);
