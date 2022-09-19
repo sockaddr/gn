@@ -7,7 +7,7 @@
  * TODO: Add description.
  */
 
- // Check gn_lstnr_cfg_ini() after modifying this struct.
+// Check gn_lstnr_cfg_ini() after modifying this struct.
 
 typedef struct gn_lstnr_cfg_s gn_lstnr_cfg_s;
 

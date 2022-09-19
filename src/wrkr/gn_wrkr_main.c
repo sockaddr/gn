@@ -134,7 +134,7 @@ gn_wrkr_main (void)
                 lstnr_cfg->addr = addr;
                 lstnr_cfg->port = atoi (port);
                 lstnr_cfg->fd = fd;
-                (void)! gn_lstnr_conf_list_push_back (&lstnr_conf_list, lstnr_cfg);
+                (void)! gn_lstnr_cfg_lst_pshb (&lstnr_conf_list, lstnr_cfg); // TODO: Check error.
 
                 error_at_line (0, 0, "", 0, "fd = %i, addr (%li) = \"%s\", port = %i\n", lstnr_cfg->fd ,
                                                                                          strlen (lstnr_cfg->addr),

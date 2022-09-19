@@ -74,12 +74,21 @@ gn_create_lstnr (gn_lstnr_cfg_lst_s * const lst, const char * const addr, const 
     goto lbl_end;
   }
 
+  /*
+   * Check error to avoid calling gn_lstnr_cfg_lst_pshb() and modifying 3 gn_lstnr_cfg_s members. This will reduce the
+   * program start time by 1 nanosecond...
+   */
+  if (lst->len == UINT16_MAX) {
+    fprintf (stderr, "Server socket configuration list is full (%i entries)\n", lst->len);
+    ret = 10;
+    goto lbl_end;
+  }
+
   cfg->fd = rsocket;
   cfg->addr = (char *)addr;
   cfg->port = port;
-
-  (void)! gn_lstnr_conf_list_push_back (lst, cfg); // TODO: Check error.
-  return ret;
+  (void)! gn_lstnr_cfg_lst_pshb (lst, cfg); // Don't need to check error. This was done just above.
+  return 0;
 
   lbl_end:
   if (rsocket > -1) close (rsocket);

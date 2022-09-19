@@ -10,7 +10,7 @@ gcc \
 src/comn/main.c \
 src/comn/gn_lstnr_cfg_ini.c \
 src/comn/gn_lstnr_cfg_lst_ini.c \
-src/comn/gn_lstnr_conf_list_push_back.c \
+src/comn/gn_lstnr_cfg_lst_pshb.c \
 \
 src/mstr/gn_create_lstnr.c \
 src/mstr/gn_mstr_cfg_ini.c \
