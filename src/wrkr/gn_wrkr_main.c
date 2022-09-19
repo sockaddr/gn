@@ -37,7 +37,7 @@ gn_wrkr_main (void)
   bool recv_loop = true;
   while (recv_loop) {
 
-    gn_lstnr_conf_s * const lstnr_conf = malloc (sizeof (gn_lstnr_conf_s));
+    gn_lstnr_cfg_s * const lstnr_conf = malloc (sizeof (gn_lstnr_cfg_s));
     if (lstnr_conf == NULL) {
       error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate gn_lstnr_conf_s");
       return;
@@ -190,9 +190,9 @@ gn_wrkr_main (void)
   gn_stop_conn_mgmt_thrds (&wrkr_conf); // Stop connection management threads.
 
   lbl_err_no_cmts: ;
-  gn_lstnr_conf_s * lstnr_conf = lstnr_conf_list.head;
+  gn_lstnr_cfg_s * lstnr_conf = lstnr_conf_list.head;
   for (uint16_t i = 0; i < lstnr_conf_list.len; i++) {
-    gn_lstnr_conf_s * next_lstnr_conf = lstnr_conf->next;
+    gn_lstnr_cfg_s * next_lstnr_conf = lstnr_conf->next;
 
     close (lstnr_conf->fd);
     lstnr_conf->fd = -1;

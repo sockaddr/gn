@@ -12,10 +12,10 @@
 void gn_lstnr_cfg_lst_ini (gn_lstnr_cfg_lst_s * const)
   __attribute__((cold)) __attribute__((nonnull));
 
-void gn_lstnr_conf_init (gn_lstnr_conf_s * const)
+void gn_lstnr_conf_init (gn_lstnr_cfg_s * const)
   __attribute__((cold)) __attribute__((nonnull));
 
-bool gn_lstnr_conf_list_push_back (gn_lstnr_cfg_lst_s * const, gn_lstnr_conf_s * const)
+bool gn_lstnr_conf_list_push_back (gn_lstnr_cfg_lst_s * const, gn_lstnr_cfg_s * const)
   __attribute__((cold)) __attribute__((nonnull)) __attribute__ ((warn_unused_result));
 
 int gn_recv_fd (int);

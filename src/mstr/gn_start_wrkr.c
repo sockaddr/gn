@@ -40,7 +40,7 @@ gn_start_wrkr (const gn_mstr_cfg_s * const mc)
     }
     default: { // Parent
       // Send server socket info one by one.
-      gn_lstnr_conf_s * lstnr_conf = mc->lstnr_cfg_lst.head;
+      gn_lstnr_cfg_s * lstnr_conf = mc->lstnr_cfg_lst.head;
       for (uint8_t i = 0; i < mc->lstnr_cfg_lst.len; lstnr_conf = lstnr_conf->next, i++) {
         printf ("Sending #%i [%s]:%i\n", lstnr_conf->fd, lstnr_conf->addr, lstnr_conf->port);
 

@@ -32,7 +32,7 @@ gn_conn_acpt_thrd (void * const p)
   const gn_lstnr_cfg_lst_s * const lstnr_cfg_lst = conn_acpt_thrd_conf->lstnr_conf_list;
 
   while (true) {
-    gn_lstnr_conf_s * lstnr_conf = lstnr_cfg_lst->head;
+    gn_lstnr_cfg_s * lstnr_conf = lstnr_cfg_lst->head;
     for (uint16_t i = 0; i < lstnr_cfg_lst->len; lstnr_conf = lstnr_conf->next, i++) {
       struct sockaddr_in sin;
       size_t sizeof_sin = sizeof (sin);
@@ -85,7 +85,7 @@ gn_conn_acpt_thrd (void * const p)
         conn->daddr = malloc (strlen (daddr) + 1);
         strcpy (conn->daddr, daddr);
         conn->fd = raccept4;
-        conn->lstnr_conf = lstnr_conf;
+        conn->lstnr_cfg = lstnr_conf;
         if (!gn_pass_conn (conn_mgmt_thrd_conf_list, conn)) continue;
 
         error_at_line (0, 0, __FILE__, __LINE__, "Connection wasn't passed");

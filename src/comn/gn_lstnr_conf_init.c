@@ -1,11 +1,15 @@
 #include <comn/hdr/gn_lstnr_conf_init.h>
 
+/*
+ * TODO: Add description.
+ */
+
 void
-gn_lstnr_conf_init (gn_lstnr_conf_s * const conf)
+gn_lstnr_conf_init (gn_lstnr_cfg_s * const cfg)
 {
-  conf->fd = -1;
-  conf->addr = NULL;
-  conf->port = 0;
-  conf->prev = NULL;
-  conf->next = NULL;
+  cfg->fd = -1;
+  cfg->addr = NULL;
+  cfg->port = 0;
+  cfg->prev = NULL;
+  cfg->next = NULL;
 }

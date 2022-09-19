@@ -1,7 +1,7 @@
 #include <comn/hdr/gn_lstnr_conf_list_push_back.h>
 
 bool
-gn_lstnr_conf_list_push_back (gn_lstnr_cfg_lst_s * const lst, gn_lstnr_conf_s * const cfg)
+gn_lstnr_conf_list_push_back (gn_lstnr_cfg_lst_s * const lst, gn_lstnr_cfg_s * const cfg)
 {
   switch (lst->len) {
     case UINT16_MAX: {

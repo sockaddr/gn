@@ -1,7 +1,7 @@
 #ifndef GN_LSTNR_CONF_INIT_H
 #define GN_LSTNR_CONF_INIT_H
 
-#include <comn/hdr/gn_lstnr_conf_s.h>
+#include <comn/hdr/gn_lstnr_cfg_s.h>
 
 #include <stddef.h>
 

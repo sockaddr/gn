@@ -17,8 +17,10 @@ gn_mstr_main (void)
   // TODO: Load master config.
   mc.wrkrs_num = 2;
 
+  // Test code, start
   (void)! gn_create_lstnr (&mc.lstnr_cfg_lst, "0.0.0.0", 8080);
   (void)! gn_create_lstnr (&mc.lstnr_cfg_lst, "192.168.2.2", 8081);
+  // Test code, end
 
   gn_start_wrkrs (&mc);
 
@@ -26,6 +28,7 @@ gn_mstr_main (void)
     sleep (1);
   }
 
+  // TODO: Empty &mc.lstnr_cfg_lst
   free (mc.self_path);
   return 0;
 }
