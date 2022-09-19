@@ -1,5 +1,21 @@
 #include <mstr/hdr/gn_mstr_main.h>
 
+// Test code, start
+#include <errno.h>
+#include <error.h>
+#include <signal.h>
+#include <stdio.h>
+
+volatile bool sigint_rcvd = false;
+
+void
+sigint_handler (const int s)
+{
+  printf ("Master received signal %i\n", s);
+  sigint_rcvd = true;
+}
+// Test code, end
+
 /*
  * TODO: Add description.
  */
@@ -7,6 +23,11 @@
 uint8_t
 gn_mstr_main (void)
 {
+  // TODO: Remove. This is just for testing a server stop.
+  if (signal (SIGINT, sigint_handler) == SIG_ERR) {
+    error_at_line (0, errno, __FILE__, __LINE__, "Failed to register SIGINT handler");
+  }
+
   gn_mstr_cfg_s mc;
   gn_mstr_cfg_ini (&mc);
 
@@ -26,7 +47,13 @@ gn_mstr_main (void)
   gn_start_wrkrs (&mc);
 
   while (true) { // Main master loop.
-    sleep (1);
+    // TODO: Remove block below.
+    if (sigint_rcvd) {
+      printf ("Master received SIGINT.\n");
+      break;
+    }
+
+    sleep (1); // TODO: Remove.
   }
 
   // TODO: Empty &mc.lstnr_cfg_lst
