@@ -1,23 +1,8 @@
 #include <wrkr/hdr/gn_wrkr_main.h>
 
-// TODO: Remove code below, start.
-
 #include <errno.h>
 #include <error.h>
-#include <signal.h>
-#include <stdio.h>
 #include <unistd.h>
-
-volatile bool sigint_rcvd = false;
-
-void
-sigint_handler (const int s)
-{
-  printf ("Signal %i\n", s);
-  sigint_rcvd = true;
-}
-
-// Remove code above, end.
 
 /*
  * TODO: Add description.
@@ -26,11 +11,6 @@ sigint_handler (const int s)
 void // TODO: Maybe return a value.
 gn_wrkr_main (void)
 {
-  // TODO: Remove. This is just for testing a server stop.
-  if (signal (SIGINT, sigint_handler) == SIG_ERR) {
-    error_at_line (0, errno, __FILE__, __LINE__, "Failed to register SIGINT handler");
-  }
-
   gn_lstnr_cfg_lst_s lstnr_conf_list;
   gn_lstnr_cfg_lst_ini (&lstnr_conf_list);
 
@@ -172,12 +152,6 @@ gn_wrkr_main (void)
   }
 
   while (true) { // Main worker loop.
-    // TODO: Remove block below.
-    if (sigint_rcvd) {
-      printf ("Received SIGINT.\n");
-      break;
-    }
-
     sleep (1); // TODO: Remove.
   }
 
