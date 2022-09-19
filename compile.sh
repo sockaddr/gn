@@ -10,6 +10,7 @@ gcc \
 src/comn/main.c \
 src/comn/gn_lstnr_cfg_ini.c \
 src/comn/gn_lstnr_cfg_lst_ini.c \
+src/comn/gn_lstnr_cfg_lst_pop.c \
 src/comn/gn_lstnr_cfg_lst_pshb.c \
 \
 src/mstr/gn_create_lstnr.c \

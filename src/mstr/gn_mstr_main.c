@@ -56,7 +56,13 @@ gn_mstr_main (void)
     sleep (1); // TODO: Remove.
   }
 
-  // TODO: Empty &mc.lstnr_cfg_lst
+  while (mc.lstnr_cfg_lst.len > 0) {
+    gn_lstnr_cfg_s * const lc = mc.lstnr_cfg_lst.head;
+    (void)! gn_lstnr_cfg_lst_pop (&mc.lstnr_cfg_lst);
+    close (lc->fd);
+    free (lc);
+  }
+
   free (mc.self_path);
   return 0;
 }
