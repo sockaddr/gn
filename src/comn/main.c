@@ -16,7 +16,7 @@ main (const int argc, const char * const * const argv)
     return 1;
   }
 
-  const char * ipc_addr = NULL; // "Address" of the Unix socket for master/worker IPC.
+  const char * ipc_addr_str = NULL; // "Address" of the Unix socket for master/worker IPC.
 
   for (int argi = 1; argi < argc; argi++)
   {
@@ -25,7 +25,7 @@ main (const int argc, const char * const * const argv)
       return 1;
     }
     else if (strncmp (argv[argi], "--ipc-addr", strlen ("--ipc-addr")) == 0) {
-      if (ipc_addr != NULL) {
+      if (ipc_addr_str != NULL) {
         fprintf (stderr, "Command line argument \"--ipc-addr\" already set\n");
         return 1;
       }
@@ -34,7 +34,7 @@ main (const int argc, const char * const * const argv)
         return 1;
       }
 
-      ipc_addr = argv[argi];
+      ipc_addr_str = argv[argi];
     }
     else {
       fprintf (stderr, "Unexpected command line argument %i \"%s\"\n", argi, argv[argi]);
@@ -43,9 +43,9 @@ main (const int argc, const char * const * const argv)
   }
 
   int ret = 0;
-  // If ipc_addr is set it means we must start as worker. --ipc-addr argument doesn't make sense for master process.
-  if (ipc_addr == NULL) ret = gn_mstr_main ();
-  else gn_wrkr_main (ipc_addr); // TODO: Place return value in 'ret' and maybe move ipc_addr to gn_wrkr_cfg_s.
+  // If ipc_addr_str is set it means we must start as worker. --ipc-addr argument doesn't make sense for master process.
+  if (ipc_addr_str == NULL) ret = gn_mstr_main ();
+  else gn_wrkr_main (ipc_addr_str); // TODO: Place return value in 'ret' and maybe move ipc_addr_str to gn_wrkr_cfg_s.
 
   return ret;
 }

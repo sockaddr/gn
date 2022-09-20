@@ -45,24 +45,24 @@ gn_mstr_main (void)
   }
 
   // Generate Unix socket name. sun_path[0] must be '\0'.
-  snprintf (mc.wrkr_io_addr.sun_path, sizeof (mc.wrkr_io_addr.sun_path), "A%lx%lx", ts.tv_sec, ts.tv_nsec); // TODO: Check error.
-  mc.wrkr_io_addr.sun_path[0] = '\0';
+  snprintf (mc.ipc_addr.sun_path, sizeof (mc.ipc_addr.sun_path), "A%lx%lx", ts.tv_sec, ts.tv_nsec); // TODO: Check error.
+  mc.ipc_addr.sun_path[0] = '\0';
 
   // Create Unix socket for master/worker IO.
-  mc.wrkr_io_fd = socket (AF_UNIX, SOCK_CLOEXEC | SOCK_NONBLOCK | SOCK_STREAM, 0);
-  if (mc.wrkr_io_fd < 0) {
+  mc.ipc_fd = socket (AF_UNIX, SOCK_CLOEXEC | SOCK_NONBLOCK | SOCK_STREAM, 0);
+  if (mc.ipc_fd < 0) {
     error_at_line (0, errno, __FILE__, __LINE__, "sun socket() failed");
     return 1; // TODO: mc.self_path not freed.
   }
 
-  if (bind (mc.wrkr_io_fd, (struct sockaddr *)&mc.wrkr_io_addr, sizeof (mc.wrkr_io_addr)) != 0) {
+  if (bind (mc.ipc_fd, (struct sockaddr *)&mc.ipc_addr, sizeof (mc.ipc_addr)) != 0) {
     error_at_line (0, errno, __FILE__, __LINE__, "sun bind() failed");
     return 1; // TODO: mc.self_path not freed.
   }
 
   // TODO: Maybe call listen() at the last time after other checks/etc are done.
 
-  if (listen (mc.wrkr_io_fd, 32) != 0) { // Chose random value 32...
+  if (listen (mc.ipc_fd, 32) != 0) { // Chose random value 32...
     error_at_line (0, errno, __FILE__, __LINE__, "sun listen() failed");
     return 1; // TODO: mc.self_path not freed.
   }

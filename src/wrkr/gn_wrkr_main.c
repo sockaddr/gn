@@ -12,7 +12,7 @@
  */
 
 void // TODO: Maybe return a value.
-gn_wrkr_main (const char * const ipc_addr)
+gn_wrkr_main (const char * const ipc_addr_str)
 {
   signal (SIGINT, SIG_IGN);
   signal (SIGPIPE, SIG_IGN);
@@ -24,7 +24,7 @@ gn_wrkr_main (const char * const ipc_addr)
   struct sockaddr_un sun;
   memset (&sun, 0, sizeof (sun));
   sun.sun_family = AF_UNIX;
-  strcpy (&sun.sun_path[1], ipc_addr);
+  strcpy (&sun.sun_path[1], ipc_addr_str);
 
   if (connect (rsocket, (struct sockaddr *)&sun, sizeof (sun)) == 0) printf ("Worker %i connected to master\n", getpid ());
 

@@ -13,10 +13,10 @@
 
 struct gn_mstr_cfg_s
 {
+  struct sockaddr_un ipc_addr;      // Address for master/worker IPC.
+  int                ipc_fd;        // Socket for master/worker IPC.
   gn_lstnr_cfg_lst_s lstnr_cfg_lst; // List of server sockets info.
   char *             self_path;     // Absolute path to the program.
-  struct sockaddr_un wrkr_io_addr;  // Address for master/worker IO.
-  int                wrkr_io_fd;    // Socket for master/worker IO.
   uint8_t            wrkrs_num;     // Number of worker processes to start.
 };
 

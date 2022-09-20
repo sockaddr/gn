@@ -10,7 +10,7 @@ gn_start_wrkr (const gn_mstr_cfg_s * const mc)
   const pid_t rfork = fork ();
   switch (rfork) {
     case 0: { // Child
-      char * const argv[4] = {mc->self_path, "--ipc-addr", (char *)&mc->wrkr_io_addr.sun_path[1], NULL};
+      char * const argv[4] = {mc->self_path, "--ipc-addr", (char *)&mc->ipc_addr.sun_path[1], NULL};
       execv (mc->self_path, argv);
       error_at_line (0, errno, __FILE__, __LINE__, "execv() failed");
       exit (1);
@@ -21,7 +21,7 @@ gn_start_wrkr (const gn_mstr_cfg_s * const mc)
     }
     default: { // Parent
       sleep (1);
-      int raccept4 = accept4 (mc->wrkr_io_fd, NULL, 0, SOCK_NONBLOCK);
+      int raccept4 = accept4 (mc->ipc_fd, NULL, 0, SOCK_NONBLOCK);
       if (raccept4 < 0) {
         error_at_line (0, errno, __FILE__, __LINE__, "accept4() failed");
         break;
