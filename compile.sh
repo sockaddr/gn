@@ -54,8 +54,7 @@ src/wrkr/gn_start_conn_mgmt_thrds.c \
 src/wrkr/gn_stop_conn_acpt_thrds.c \
 src/wrkr/gn_stop_conn_mgmt_thrds.c \
 \
-src/wrkr/gn_wrkr_conf_init.c \
-\
+src/wrkr/gn_wrkr_cfg_ini.c \
 src/wrkr/gn_wrkr_main.c \
 \
 -lpthread

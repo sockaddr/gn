@@ -1,11 +1,11 @@
-#include <wrkr/hdr/gn_wrkr_conf_init.h>
+#include <wrkr/hdr/gn_wrkr_cfg_ini.h>
 
 /*
  * TODO: Add description.
  */
 
 bool
-gn_wrkr_conf_init (gn_wrkr_conf_s * const wc, gn_lstnr_cfg_lst_s * const lstnr_conf_list)
+gn_wrkr_cfg_ini (gn_wrkr_conf_s * const wc, gn_lstnr_cfg_lst_s * const lstnr_conf_list)
 {
   if (wc == NULL) return true;
 
