@@ -1,7 +1,7 @@
 #ifndef GN_STOP_CONN_ACPT_THRDS_H
 #define GN_STOP_CONN_ACPT_THRDS_H
 
-#include <wrkr/hdr/gn_wrkr_conf_s.h>
+#include <wrkr/hdr/gn_wrkr_cfg_s.h>
 
 #include <stdlib.h>
 

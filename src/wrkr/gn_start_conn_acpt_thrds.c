@@ -5,7 +5,7 @@
  */
 
 void // TODO: Maybe return a value.
-gn_start_conn_acpt_thrds (gn_wrkr_conf_s * const wc)
+gn_start_conn_acpt_thrds (gn_wrkr_cfg_s * const wc)
 {
   /* Number of connection acceptance threads to start. Something larger than uint8_t might be too much.
    * We'll have to test it.

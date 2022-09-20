@@ -145,7 +145,7 @@ gn_wrkr_main (const char * const ipc_addr_str)
 
   // TODO: Receive and parse worker configuration.
 
-  gn_wrkr_conf_s wc;
+  gn_wrkr_cfg_s wc;
   gn_wrkr_cfg_ini (&wc, &lstnr_conf_list);
 
   // TODO: Maybe use functions to validate.

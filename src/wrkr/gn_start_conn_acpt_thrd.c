@@ -8,7 +8,7 @@
  */
 
 bool
-gn_start_conn_acpt_thrd (gn_wrkr_conf_s * const wc, gn_conn_acpt_thrd_conf_s * const tc)
+gn_start_conn_acpt_thrd (gn_wrkr_cfg_s * const wc, gn_conn_acpt_thrd_conf_s * const tc)
 {
   printf ("Starting connection acceptance thread (conf ptr %p)... ", tc); // TODO: Remove.
 

@@ -5,7 +5,7 @@
  */
 
 void // TODO: Maybe return a value.
-gn_start_conn_mgmt_thrds (gn_wrkr_conf_s * const wc)
+gn_start_conn_mgmt_thrds (gn_wrkr_cfg_s * const wc)
 {
   for (uint16_t i = 0; i < wc->conn_mgmt_thrd_num; i++) {
     // If list if full, it's useless to try to allocate/push/start anything.

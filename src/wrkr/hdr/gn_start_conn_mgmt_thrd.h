@@ -1,7 +1,7 @@
 #ifndef GN_START_CONN_MGMT_THRD_H
 #define GN_START_CONN_MGMT_THRD_H
 
-#include <wrkr/hdr/gn_wrkr_conf_s.h>
+#include <wrkr/hdr/gn_wrkr_cfg_s.h>
 
 void * gn_conn_mgmt_thrd (void * const);
 

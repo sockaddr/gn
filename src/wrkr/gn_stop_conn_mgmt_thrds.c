@@ -4,7 +4,7 @@
 #include <stdio.h> // TODO: Remove.
 
 void
-gn_stop_conn_mgmt_thrds (gn_wrkr_conf_s * const wrkr_conf)
+gn_stop_conn_mgmt_thrds (gn_wrkr_cfg_s * const wrkr_conf)
 {
   gn_conn_mgmt_thrd_conf_s * conf = wrkr_conf->conn_mgmt_thrd_conf_list.head;
 
