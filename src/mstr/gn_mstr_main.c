@@ -47,6 +47,22 @@ gn_create_ipc (gn_mstr_cfg_s * const mc)
   return;
 }
 
+bool
+gn_gen_ipc_path (struct sockaddr_un * const ipc_addr)
+{
+  struct timespec ts = { .tv_sec = 0, .tv_nsec = 0 };
+  const int rclock_gettime = clock_gettime (CLOCK_REALTIME, &ts);
+  if (rclock_gettime != 0) {
+    error_at_line (0, errno, __FILE__, __LINE__, "clock_gettime() failed");
+    return true;
+  }
+
+  // Generate Unix socket name. sun_path[0] must be '\0'.
+  snprintf (ipc_addr->sun_path, sizeof (ipc_addr->sun_path), "A%lx%lx", ts.tv_sec, ts.tv_nsec); // TODO: Check error.
+  ipc_addr->sun_path[0] = '\0';
+  return false;
+}
+
 /*
  * TODO: Add description.
  */
@@ -67,16 +83,12 @@ gn_mstr_main (void)
   mc.self_path = gn_self_path (&gn_self_path_err);
   if (mc.self_path == NULL) return 1;
 
-  struct timespec ts = { .tv_sec = 0, .tv_nsec = 0 };
-  const int rclock_gettime = clock_gettime (CLOCK_REALTIME, &ts);
-  if (rclock_gettime != 0) {
-    error_at_line (0, errno, __FILE__, __LINE__, "clock_gettime() failed");
-    return 1; // TODO: mc.self_path not freed.
-  }
+  int ret = 0;
 
-  // Generate Unix socket name. sun_path[0] must be '\0'.
-  snprintf (mc.ipc_addr.sun_path, sizeof (mc.ipc_addr.sun_path), "A%lx%lx", ts.tv_sec, ts.tv_nsec); // TODO: Check error.
-  mc.ipc_addr.sun_path[0] = '\0';
+  if (gn_gen_ipc_path (&mc.ipc_addr)) {
+    ret = 1;
+    goto lbl_err_ipc_path;
+  }
 
   gn_create_ipc (&mc);
 
@@ -108,6 +120,8 @@ gn_mstr_main (void)
     free (lc);
   }
 
+  lbl_err_ipc_path:
   free (mc.self_path);
-  return 0;
+
+  return ret;
 }
