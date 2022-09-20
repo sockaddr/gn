@@ -45,7 +45,7 @@ main (const int argc, const char * const * const argv)
   int ret = 0;
   // If ipc_addr_str is set it means we must start as worker. --ipc-addr argument doesn't make sense for master process.
   if (ipc_addr_str == NULL) ret = gn_mstr_main ();
-  else gn_wrkr_main (ipc_addr_str); // TODO: Place return value in 'ret' and maybe move ipc_addr_str to gn_wrkr_cfg_s.
+  else ret = gn_wrkr_main (ipc_addr_str); // TODO: Maybe move ipc_addr_str to gn_wrkr_cfg_s.
 
   return ret;
 }

@@ -11,7 +11,7 @@
  * TODO: Add description.
  */
 
-void // TODO: Maybe return a value.
+uint8_t
 gn_wrkr_main (const char * const ipc_addr_str)
 {
   signal (SIGINT, SIG_IGN);
@@ -27,6 +27,7 @@ gn_wrkr_main (const char * const ipc_addr_str)
   strcpy (&sun.sun_path[1], ipc_addr_str);
 
   if (connect (rsocket, (struct sockaddr *)&sun, sizeof (sun)) == 0) printf ("Worker %i connected to master\n", getpid ());
+  else return 1;
 
   bool recv_loop = true;
   while (recv_loop) {
@@ -34,7 +35,7 @@ gn_wrkr_main (const char * const ipc_addr_str)
     gn_lstnr_cfg_s * const lstnr_cfg = malloc (sizeof (gn_lstnr_cfg_s));
     if (lstnr_cfg == NULL) {
       error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate gn_lstnr_cfg_s");
-      return;
+      return 1;
     }
     gn_lstnr_cfg_ini (lstnr_cfg);
 
@@ -42,7 +43,7 @@ gn_wrkr_main (const char * const ipc_addr_str)
     if (addr == NULL) {
       error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate server socket address buffer");
       free (lstnr_cfg);
-      return;
+      return 1;
     }
 
     struct pollfd pfd = {
@@ -145,7 +146,7 @@ gn_wrkr_main (const char * const ipc_addr_str)
   // TODO: Receive and parse worker configuration.
 
   gn_wrkr_conf_s wc;
-  (void)! gn_wrkr_cfg_ini (&wc, &lstnr_conf_list);
+  gn_wrkr_cfg_ini (&wc, &lstnr_conf_list);
 
   // TODO: Maybe use functions to validate.
   wc.conn_acpt_thrd_num = 4;
@@ -212,4 +213,6 @@ gn_wrkr_main (const char * const ipc_addr_str)
     free (lstnr_cfg);
     lstnr_cfg = next_lstnr_cfg;
   }
+
+  return 0;
 }

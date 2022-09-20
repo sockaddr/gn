@@ -18,6 +18,35 @@ sigint_handler (const int s)
 }
 // Test code, end
 
+void
+gn_create_ipc (gn_mstr_cfg_s * const mc)
+{
+  mc->ipc_fd = socket (AF_UNIX, SOCK_CLOEXEC | SOCK_NONBLOCK | SOCK_STREAM, 0);
+  if (mc->ipc_fd < 0) {
+    error_at_line (0, errno, __FILE__, __LINE__, "Failed to create IPC socket");
+    return;
+  }
+
+  if (bind (mc->ipc_fd, (struct sockaddr *)&mc->ipc_addr, sizeof (mc->ipc_addr)) != 0) {
+    error_at_line (0, errno, __FILE__, __LINE__, "Failed to bind IPC socket");
+    goto lbl_end;
+  }
+
+  // TODO: Maybe call listen() at the last time after other checks/etc are done.
+
+  if (listen (mc->ipc_fd, 32) != 0) { // Chose random value 32...
+    error_at_line (0, errno, __FILE__, __LINE__, "Failed to listen on IPC socket");
+    goto lbl_end;
+  }
+
+  return;
+
+  lbl_end:
+  close (mc->ipc_fd);
+  mc->ipc_fd = -1;
+  return;
+}
+
 /*
  * TODO: Add description.
  */
@@ -25,10 +54,11 @@ sigint_handler (const int s)
 uint8_t
 gn_mstr_main (void)
 {
-  // TODO: Remove. This is just for testing a server stop.
+  // Test code, start
   if (signal (SIGINT, sigint_handler) == SIG_ERR) {
     error_at_line (0, errno, __FILE__, __LINE__, "Failed to register SIGINT handler");
   }
+  // Test code, end
 
   gn_mstr_cfg_s mc;
   gn_mstr_cfg_ini (&mc);
@@ -48,24 +78,7 @@ gn_mstr_main (void)
   snprintf (mc.ipc_addr.sun_path, sizeof (mc.ipc_addr.sun_path), "A%lx%lx", ts.tv_sec, ts.tv_nsec); // TODO: Check error.
   mc.ipc_addr.sun_path[0] = '\0';
 
-  // Create Unix socket for master/worker IO.
-  mc.ipc_fd = socket (AF_UNIX, SOCK_CLOEXEC | SOCK_NONBLOCK | SOCK_STREAM, 0);
-  if (mc.ipc_fd < 0) {
-    error_at_line (0, errno, __FILE__, __LINE__, "sun socket() failed");
-    return 1; // TODO: mc.self_path not freed.
-  }
-
-  if (bind (mc.ipc_fd, (struct sockaddr *)&mc.ipc_addr, sizeof (mc.ipc_addr)) != 0) {
-    error_at_line (0, errno, __FILE__, __LINE__, "sun bind() failed");
-    return 1; // TODO: mc.self_path not freed.
-  }
-
-  // TODO: Maybe call listen() at the last time after other checks/etc are done.
-
-  if (listen (mc.ipc_fd, 32) != 0) { // Chose random value 32...
-    error_at_line (0, errno, __FILE__, __LINE__, "sun listen() failed");
-    return 1; // TODO: mc.self_path not freed.
-  }
+  gn_create_ipc (&mc);
 
   // TODO: Load master config.
   mc.wrkrs_num = 2;
