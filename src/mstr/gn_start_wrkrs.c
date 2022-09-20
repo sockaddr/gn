@@ -1,5 +1,9 @@
 #include <mstr/hdr/gn_start_wrkrs.h>
 
+/*
+ * TODO: Add description.
+ */
+
 void
 gn_start_wrkrs (gn_mstr_cfg_s * const mc)
 {

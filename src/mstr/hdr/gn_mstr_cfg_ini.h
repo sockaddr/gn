@@ -4,6 +4,7 @@
 #include <mstr/hdr/gn_mstr_cfg_s.h>
 
 #include <stddef.h>
+#include <sys/socket.h>
 
 void gn_lstnr_cfg_lst_ini (gn_lstnr_cfg_lst_s * const)
   __attribute__((cold)) __attribute__((nonnull));
