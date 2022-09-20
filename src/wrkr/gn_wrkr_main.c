@@ -3,19 +3,30 @@
 #include <errno.h>
 #include <error.h>
 #include <signal.h>
+#include <stdio.h>
 #include <unistd.h>
+#include <sys/un.h>
 
 /*
  * TODO: Add description.
  */
 
 void // TODO: Maybe return a value.
-gn_wrkr_main (void)
+gn_wrkr_main (const char * const ipc_addr)
 {
   signal (SIGINT, SIG_IGN);
   signal (SIGPIPE, SIG_IGN);
   gn_lstnr_cfg_lst_s lstnr_conf_list;
   gn_lstnr_cfg_lst_ini (&lstnr_conf_list);
+
+  int rsocket = socket (AF_UNIX, SOCK_CLOEXEC | SOCK_NONBLOCK | SOCK_STREAM, 0);
+
+  struct sockaddr_un sun;
+  memset (&sun, 0, sizeof (sun));
+  sun.sun_family = AF_UNIX;
+  strcpy (&sun.sun_path[1], ipc_addr);
+
+  if (connect (rsocket, (struct sockaddr *)&sun, sizeof (sun)) == 0) printf ("Worker %i connected to master\n", getpid ());
 
   bool recv_loop = true;
   while (recv_loop) {
@@ -35,7 +46,7 @@ gn_wrkr_main (void)
     }
 
     struct pollfd pfd = {
-      .fd = STDIN_FILENO,
+      .fd = rsocket,
       .events = POLLIN | POLLRDHUP,
       .revents = 0
     };
@@ -54,7 +65,7 @@ gn_wrkr_main (void)
         const size_t recv_buf_sz = 128;
         char recv_buf[recv_buf_sz];
 
-        const ssize_t rrecv = recv (STDIN_FILENO, recv_buf, recv_buf_sz - 1, SOCK_NONBLOCK);
+        const ssize_t rrecv = recv (rsocket, recv_buf, recv_buf_sz - 1, SOCK_NONBLOCK);
         switch (rrecv) {
           case 0: {
             error_at_line (0, 0, __FILE__, __LINE__, "Master disconnected");
@@ -77,7 +88,7 @@ gn_wrkr_main (void)
             // Not an error.
             error_at_line (0, 0, "", 0, "%i rcvd from master (%li) \"%s\"\n", getpid (), recv_buf_len, recv_buf);
 
-            const ssize_t rsend = send (STDOUT_FILENO, recv_buf, recv_buf_len, SOCK_NONBLOCK);
+            const ssize_t rsend = send (rsocket, recv_buf, recv_buf_len, SOCK_NONBLOCK);
             if (rsend < 0) {
               error_at_line (0, errno, __FILE__, __LINE__, "Worker send() failed");
             }
@@ -93,7 +104,7 @@ gn_wrkr_main (void)
                 break;
               }
               default: {
-                int fd = gn_recv_fd (STDIN_FILENO);
+                int fd = gn_recv_fd (rsocket);
                 error_at_line (0, 0, "", 0, "Worker #%i received #%i %s", getpid (), fd, recv_buf);
 
                 // Get address
@@ -156,19 +167,13 @@ gn_wrkr_main (void)
 
   bool loop = true;
   while (loop) { // Main worker loop.
-    struct pollfd pfd[2];
-    pfd[0] = (struct pollfd){
-      .fd = STDIN_FILENO,
+    struct pollfd pfd = {
+      .fd = rsocket,
       .events = POLLIN | POLLRDHUP,
       .revents = 0
     };
-    pfd[1] = (struct pollfd){
-      .fd = STDOUT_FILENO,
-      .events = POLLOUT | POLLRDHUP,
-      .revents = 0
-    };
 
-    const int rpoll = poll (pfd, 2, 0);
+    const int rpoll = poll (&pfd, 1, 0);
     switch (rpoll) {
       case 0: {
         break;
@@ -178,13 +183,9 @@ gn_wrkr_main (void)
         break;
       }
       default: {
-        for (uint8_t pfd_i = 0; pfd_i < 2; pfd_i++) {
-          if (pfd[pfd_i].revents & POLLRDHUP) {
-            if (pfd_i == 0) error_at_line (0, 0, "", 0, "STDIN closed");
-            else error_at_line (0, 0, "", 0, "STDOUT closed");
-            error_at_line (0, 0, "", 0, "Stopping worker %i", getpid ());
-            loop = false;
-          }
+        if (pfd.revents & POLLRDHUP) {
+          printf ("IPC closed, stopping worker %i\n", getpid ());
+          loop = false;
         }
       }
     }

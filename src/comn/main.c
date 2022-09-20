@@ -16,6 +16,7 @@ main (const int argc, const char * const * const argv)
     return 1;
   }
 
+  const char * ipc_addr = NULL;
   bool worker = false; // If false the process will run as master, if true, as a worker.
 
   for (int argi = 1; argi < argc; argi++)
@@ -23,6 +24,15 @@ main (const int argc, const char * const * const argv)
     if (argv[argi] == NULL) {
       fprintf (stderr, "argv[%i] is NULL\n", argi);
       return 1;
+    }
+    else if (strncmp (argv[argi], "--ipc-addr", strlen ("--ipc_addr")) == 0) {
+      if (++argi >= argc) {
+        fprintf (stderr, "Missing value for command line argument %i \"--ipc-addr\"\n", argi);
+        return 1;
+      }
+
+      ipc_addr = argv[argi];
+      fprintf (stdout, "IPC addr: '%s'\n", ipc_addr);
     }
     else if (strncmp (argv[argi], "--worker", strlen ("--worker")) == 0) worker = true;
     else {
@@ -33,7 +43,7 @@ main (const int argc, const char * const * const argv)
 
   int ret = 0;
   if (!worker) ret = gn_mstr_main ();
-  else gn_wrkr_main (); // TODO: Place return value in 'ret'
+  else gn_wrkr_main (ipc_addr); // TODO: Place return value in 'ret'
 
   return ret;
 }

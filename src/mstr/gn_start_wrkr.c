@@ -7,31 +7,12 @@
 void
 gn_start_wrkr (const gn_mstr_cfg_s * const mc)
 {
-  // Create socket pair to send configuration and sockets to worker process.
-  int sp[2] = {-1, -1}; // TODO: Store them in worker proc entry.
-  const int rsocketpair = socketpair (AF_UNIX, SOCK_CLOEXEC | SOCK_NONBLOCK | SOCK_STREAM, 0, sp);
-  if (rsocketpair != 0) {
-    error_at_line (0, errno, __FILE__, __LINE__, "socketpair() failed");
-    return;
-  }
-
   const pid_t rfork = fork ();
   switch (rfork) {
     case 0: { // Child
-      if (dup2 (sp[0], STDIN_FILENO) == -1) {
-        error_at_line (0, errno, __FILE__, __LINE__, "dup2() failed");
-        goto lbl_chld_end;
-      }
-      if (dup2 (sp[0], STDOUT_FILENO) == -1) {
-        error_at_line (0, errno, __FILE__, __LINE__, "dup2() failed");
-        goto lbl_chld_end;
-      }
-
-      char * const argv[3] = {mc->self_path, "--worker", NULL};
+      char * const argv[5] = {mc->self_path, "--worker", "--ipc-addr", (char *)&mc->wrkr_io_addr.sun_path[1], NULL};
       execv (mc->self_path, argv);
       error_at_line (0, errno, __FILE__, __LINE__, "execv() failed");
-
-      lbl_chld_end:
       exit (1);
     }
     case -1: {
@@ -39,6 +20,12 @@ gn_start_wrkr (const gn_mstr_cfg_s * const mc)
       break;
     }
     default: { // Parent
+      sleep (1);
+      int raccept4 = accept4 (mc->wrkr_io_fd, NULL, 0, SOCK_NONBLOCK);
+      if (raccept4 < 0) {
+        error_at_line (0, errno, __FILE__, __LINE__, "accept4() failed");
+        break;
+      }
       // Send server socket info one by one.
       gn_lstnr_cfg_s * lstnr_conf = mc->lstnr_cfg_lst.head;
       for (uint8_t i = 0; i < mc->lstnr_cfg_lst.len; lstnr_conf = lstnr_conf->next, i++) {
@@ -60,13 +47,13 @@ gn_start_wrkr (const gn_mstr_cfg_s * const mc)
           goto lbl_prnt_end;
         }
 
-        const ssize_t rsend = send (sp[1], send_buf, strlen (send_buf), SOCK_NONBLOCK);
+        const ssize_t rsend = send (raccept4, send_buf, strlen (send_buf), SOCK_NONBLOCK);
         if (rsend < 0) {
           error_at_line (0, errno, __FILE__, __LINE__, "send() failed");
         }
 
         struct pollfd pfd = {
-          .fd = sp[1],
+          .fd = raccept4,
           .events = POLLIN | POLLRDHUP,
           .revents = 0
         };
@@ -84,7 +71,7 @@ gn_start_wrkr (const gn_mstr_cfg_s * const mc)
           default: {
             const size_t recv_buf_sz = 128;
             char recv_buf[recv_buf_sz];
-            ssize_t rrecv = recv (sp[1], recv_buf, recv_buf_sz - 1, SOCK_NONBLOCK);
+            ssize_t rrecv = recv (raccept4, recv_buf, recv_buf_sz - 1, SOCK_NONBLOCK);
             switch (rrecv) {
               case 0: {
                 error_at_line (0, 0, __FILE__, __LINE__, "Worker disconnected");
@@ -98,14 +85,14 @@ gn_start_wrkr (const gn_mstr_cfg_s * const mc)
                 const size_t recv_buf_len = (size_t)rrecv;
                 recv_buf[recv_buf_len] = '\0';
                 printf ("Received from worker #%i (%li) \"%s\"\n", rfork, recv_buf_len, recv_buf);
-                gn_send_fd (sp[1], lstnr_conf->fd);
+                gn_send_fd (raccept4, lstnr_conf->fd);
               }
             }
           }
         }
       }
 
-      const ssize_t rsend = send (sp[1], "/", 1, SOCK_NONBLOCK);
+      const ssize_t rsend = send (raccept4, "/", 1, SOCK_NONBLOCK);
       if (rsend < 0) {
         error_at_line (0, errno, __FILE__, __LINE__, "send() failed");
       }
@@ -114,7 +101,4 @@ gn_start_wrkr (const gn_mstr_cfg_s * const mc)
       return;
     }
   }
-
-  close (sp[0]);
-  close (sp[1]);
 }
