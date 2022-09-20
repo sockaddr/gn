@@ -13,6 +13,8 @@ src/comn/gn_lstnr_cfg_lst_ini.c \
 src/comn/gn_lstnr_cfg_lst_pop.c \
 src/comn/gn_lstnr_cfg_lst_pshb.c \
 \
+src/mstr/gn_ipc_create.c \
+\
 src/mstr/gn_create_lstnr.c \
 src/mstr/gn_mstr_cfg_ini.c \
 src/mstr/gn_mstr_main.c \
