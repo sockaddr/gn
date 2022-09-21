@@ -4,7 +4,8 @@
 #include <mstr/hdr/gn_mstr_cfg_s.h>
 
 #include <errno.h>
-#include <error.h>
+#include <stdbool.h>
+#include <stdio.h>
 #include <unistd.h>
 #include <sys/socket.h>
 

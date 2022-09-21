@@ -43,7 +43,10 @@ gn_mstr_main (void)
     goto lbl_err_ipc_path;
   }
 
-  gn_ipc_create (&mc);
+  if (gn_ipc_create (&mc)) {
+    ret = 1;
+    goto lbl_err_ipc_create;
+  }
 
   // TODO: Load master config.
   mc.wrkrs_num = 2;
@@ -73,6 +76,7 @@ gn_mstr_main (void)
     free (lc);
   }
 
+  lbl_err_ipc_create:
   lbl_err_ipc_path:
   free (mc.self_path);
 
