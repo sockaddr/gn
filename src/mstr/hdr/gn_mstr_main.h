@@ -14,7 +14,13 @@ void gn_start_wrkrs (gn_mstr_cfg_s * const);
 uint8_t gn_create_lstnr (gn_lstnr_cfg_lst_s * const, const char * const, const uint16_t)
   __attribute__((cold)) __attribute__((nonnull)) __attribute__((warn_unused_result));
 
+void gn_ipc_close (int * const)
+  __attribute__((cold)) __attribute__((nonnull));
+
 bool gn_ipc_create (gn_mstr_cfg_s * const)
+  __attribute__((cold)) __attribute__((nonnull)) __attribute__((warn_unused_result));
+
+bool gn_ipc_listen (int * const)
   __attribute__((cold)) __attribute__((nonnull)) __attribute__((warn_unused_result));
 
 bool gn_ipc_path_gen (struct sockaddr_un * const)

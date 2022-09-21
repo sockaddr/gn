@@ -57,6 +57,11 @@ gn_mstr_main (void)
   (void)! gn_create_lstnr (&mc.lstnr_cfg_lst, "127.0.0.1", 8082);
   // Test code, end
 
+  if (gn_ipc_listen (&mc.ipc_fd)) {
+    ret = 1;
+    goto lbl_err_ipc_listen;
+  }
+
   gn_start_wrkrs (&mc); // TODO: Maybe use returned value.
 
   while (true) { // Main master loop.
@@ -75,6 +80,9 @@ gn_mstr_main (void)
     close (lc->fd);
     free (lc);
   }
+
+  lbl_err_ipc_listen:
+  gn_ipc_close (&mc.ipc_fd);
 
   lbl_err_ipc_create:
   lbl_err_ipc_path:
