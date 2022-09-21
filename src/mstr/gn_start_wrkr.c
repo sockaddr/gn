@@ -32,12 +32,6 @@ gn_start_wrkr (const gn_mstr_cfg_s * const mc)
 }
 
 /*
-sleep (1);
-int raccept4 = accept4 (mc->ipc_fd, NULL, 0, SOCK_NONBLOCK);
-if (raccept4 < 0) {
-  error_at_line (0, errno, __FILE__, __LINE__, "accept4() failed");
-  break;
-}
 // Send server socket info one by one.
 gn_lstnr_cfg_s * lstnr_conf = mc->lstnr_cfg_lst.head;
 for (uint8_t i = 0; i < mc->lstnr_cfg_lst.len; lstnr_conf = lstnr_conf->next, i++) {
