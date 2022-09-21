@@ -12,7 +12,7 @@ gn_start_wrkrs (gn_mstr_cfg_s * const mc)
 
     const int wrkr_fd = gn_wrkr_acpt (mc->ipc_fd);
     if (wrkr_fd > -1) {
-
+      gn_lstnrs_send (wrkr_fd, &mc->lstnr_cfg_lst);
     }
   }
 }
