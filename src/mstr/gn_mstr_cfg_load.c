@@ -125,7 +125,7 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
 
           size_t directive_line_ix = 0;
           while (directive_line_ix < directive_line_len) {
-            if (directive_line[directive_line_ix] == ' ' || directive_line[directive_line_ix] == '\t') {
+            if (directive_line[directive_line_ix] == ' ' || directive_line[directive_line_ix] == '\t' || directive_line[directive_line_ix] == ';') {
               directive_name[directive_name_len] = '\0';
               break;
             }
@@ -139,6 +139,12 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
           }
 
           printf ("directive_name (%li) \"%s\"\n", directive_name_len, directive_name);
+          if (directive_name_len == 1) {
+            fprintf (stderr, "Empty directive in \"%s\" line %li\n", path, directive_line_nr);
+            load_lo = false;
+            ret = true;
+            break;
+          }
 
           const size_t directive_value_sz = 65536;
           char directive_value[directive_value_sz];
@@ -159,6 +165,22 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
           }
 
           printf ("directive_value (%li) \"%s\"\n", directive_value_len, directive_value);
+
+          if (!strcmp (directive_name, "workers")) {
+
+          } else if (!strcmp (directive_name, "connection_acceptance_threads")) {
+
+          } else if (!strcmp (directive_name, "connection_management_threads")) {
+
+          } else if (!strcmp (directive_name, "allow_start_without_connection_acceptance_threads")) {
+
+          } else if (!strcmp (directive_name, "allow_start_without_connection_management_threads")) {
+
+          } else {
+            fprintf (stderr, "Unknow directive \"%s\" in \"%s\" line %li\n", directive_name, path, directive_line_nr);
+            load_lo = false;
+            ret = true;
+          }
 
           directive_line[0] = '\0';
           directive_line_len = 0;
