@@ -144,14 +144,17 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
           char directive_value[directive_value_sz];
           size_t directive_value_len = 0;
 
-          while (directive_line_ix < directive_line_len) {
+          for (; directive_line_ix < directive_line_len; directive_line_ix++) {
             if (directive_line[directive_line_ix] == ';') {
               directive_value[directive_value_len] = '\0';
               break;
             }
 
+            if (directive_value_len == 0) {
+              if (directive_line[directive_line_ix] == ' ' || directive_line[directive_line_ix] == '\t') continue;
+            }
+
             directive_value[directive_value_len] = directive_line[directive_line_ix];
-            directive_line_ix++;
             directive_value_len++;
           }
 
