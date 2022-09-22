@@ -9,139 +9,141 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
 {
   if (mc) {} // TODO: Remove.
 
-  int ropen = open (path, O_CLOEXEC | O_RDONLY);
-  if (ropen < 0) {
+  int fd = open (path, O_CLOEXEC | O_RDONLY);
+  if (fd < 0) {
     fprintf (stderr, "Failed to open master configuration file \"%s\" (%s)\n", path, strerror (errno));
     return true;
   }
 
-  size_t line_nr = 1; // Line we're at.
-  size_t directive_line_nr = 1; // Line the directive was found at.
+  size_t ln_nr = 1; // Line we're at.
+  size_t drcv_ln_nr = 1; // Line the directive was found at.
 
-  const size_t read_buf_sz = 16;
-  char read_buf[read_buf_sz];
-  read_buf[0] = '\0';
-  size_t read_buf_len = 0;
+  char buf[READ_BUF_SZ];
+  memset (buf, 0, READ_BUF_SZ);
+  size_t buf_len = 0;
 
-  const size_t directive_line_sz = 65536;
-  char directive_line[directive_line_sz];
-  directive_line[0] = '\0';
-  size_t directive_line_len = 0;
+  char drcv_ln[DRCV_LN_SZ];
+  memset (drcv_ln, 0, DRCV_LN_SZ);
+  size_t drcv_ln_len = 0;
 
-  bool got_directive_line = false;
-  bool load_lo = true;
+  bool got_ln = false;
+  bool loop = true;
   bool ret = true;
 
-  while (load_lo) {
-    // Append to read_buf. It may contain unused data from the previous read().
-    const ssize_t rread = read (ropen, &read_buf[read_buf_len], read_buf_sz - 1 - read_buf_len);
+  while (loop) {
+    // Append to read buffer. It may contain unused data from the previous read().
+    errno = 0;
+    const ssize_t rread = read (fd, &buf[buf_len], READ_BUF_SZ - 1 - buf_len);
     switch (rread) {
       case -1: {
         fprintf (stderr, "Failed to read master configuration file \"%s\" (%s)\n", path, strerror (errno));
-        load_lo = false;
+        loop = false;
 
-        if (errno == EBADF) ropen = -1;
+        if (errno == EBADF) fd = -1;
         break;
       }
       case 0: {
-        load_lo = false;
+        loop = false;
         ret = false;
         break;
       }
       default: {
         if (rread < -1) {
-          fprintf (stderr, "Unexpected read() error. Code %li, errno %i (%s)\n", rread, errno, strerror (errno));
-          load_lo = false;
+          fprintf (stderr, "Unexpected read() error while loading master configuration file \"%s\". "
+                           "Code %li, errno %i (%s)\n", path, rread, errno, strerror (errno));
+          loop = false;
           break;
         }
 
-        // Append to read_buf. It may contain unused data from the previous read().
-        read_buf_len += (size_t)rread;
-        read_buf[read_buf_len] = '\0';
+        // Append to read buffer. It may contain unused data from the previous read().
+        buf_len += (size_t)rread;
+        buf[buf_len] = '\0';
 
-        if (!got_directive_line) {
-          if (strchr (read_buf, ';') != NULL) {
-            size_t read_buf_ix = 0;
-
-            for (; read_buf[read_buf_ix] != ';'; read_buf_ix++) {
-              if (read_buf[read_buf_ix] == '\n') {
-                line_nr++;
+        if (!got_ln) { // If we don't have a directive line...
+          if (strchr (buf, ';') != NULL) { // and we have a line delimiter in the read buffer...
+            // Append to the directive line buffer
+            size_t buf_i = 0;
+            for (; buf[buf_i] != ';'; buf_i++) {
+              // Don't append leading new-line characters
+              if (buf[buf_i] == '\n') {
+                ln_nr++;
                 continue;
               }
 
-              if (directive_line_len == 0) {
-                directive_line_nr = line_nr;
-                // Don't append leading whitespace.
-                if (read_buf[read_buf_ix] == ' ' || read_buf[read_buf_ix] == '\t') continue;
+              // Here, we skipped new-lines, now we're at the line where the directive starts
+              if (drcv_ln_len == 0) {
+                drcv_ln_nr = ln_nr; // Set the directive line number
+                if (buf[buf_i] == ' ' || buf[buf_i] == '\t') continue; // Don't append leading whitespace.
               }
 
-              directive_line[directive_line_len] = read_buf[read_buf_ix];
-              directive_line_len++;
+              // Now append
+              drcv_ln[drcv_ln_len] = buf[buf_i];
+              drcv_ln_len++;
             }
 
-            const size_t sem_ix = read_buf_ix; // Semicolon index.
+            const size_t sem_ix = buf_i; // Semicolon index.
             // Append the semicolon to the directive line.
-            directive_line[directive_line_len] = read_buf[read_buf_ix];
-            directive_line_len++;
-            directive_line[directive_line_len] = '\0';
+            drcv_ln[drcv_ln_len] = buf[buf_i];
+            drcv_ln_len++;
+            drcv_ln[drcv_ln_len] = '\0';
 
             // Move the remaining read_buf data to the beginning of read_buf.
-            read_buf_ix++;
-            for (size_t i = 0; read_buf_ix < read_buf_len; i++, read_buf_ix++) {
+            buf_i++;
+            for (size_t i = 0; buf_i < buf_len; i++, buf_i++) {
               // if (read_buf[read_buf_ix] == '\n') line_nr++;
-              read_buf[i] = read_buf[read_buf_ix];
+              buf[i] = buf[buf_i];
             }
-            read_buf_len = read_buf_len - sem_ix - 1; // Update read_buf length.
-            read_buf[read_buf_len] = '\0';
+            buf_len = buf_len - sem_ix - 1; // Update read_buf length.
+            buf[buf_len] = '\0';
 
-            got_directive_line = true;
+            got_ln = true;
           } else {
-            for (size_t read_buf_ix = 0; read_buf[read_buf_ix] != '\0'; read_buf_ix++) {
-              if (read_buf[read_buf_ix] == '\n') {
-                line_nr++;
+            for (size_t buf_i = 0; buf[buf_i] != '\0'; buf_i++) {
+              if (buf[buf_i] == '\n') {
+                ln_nr++;
                 continue;
               }
 
-              if (directive_line_len == 0) {
-                directive_line_nr = line_nr;
+              if (drcv_ln_len == 0) {
+                drcv_ln_nr = ln_nr;
                 // Don't append leading whitespace.
-                if (read_buf[read_buf_ix] == ' ' || read_buf[read_buf_ix] == '\t') continue;
+                if (buf[buf_i] == ' ' || buf[buf_i] == '\t') continue;
               }
-              directive_line[directive_line_len] = read_buf[read_buf_ix];
-              directive_line_len++;
+              drcv_ln[drcv_ln_len] = buf[buf_i];
+              drcv_ln_len++;
             }
-            directive_line[directive_line_len] = '\0';
+            drcv_ln[drcv_ln_len] = '\0';
 
-            read_buf_len = 0;
+            buf_len = 0;
           }
         }
 
-        if (got_directive_line) {
-          printf ("%s:%li: (%li) \"%s\"\n", path, directive_line_nr, directive_line_len, directive_line);
+        if (got_ln) {
+          printf ("%s:%li: (%li) \"%s\"\n", path, drcv_ln_nr, drcv_ln_len, drcv_ln);
 
           const size_t directive_name_sz = 64;
           char directive_name[directive_name_sz];
           size_t directive_name_len = 0;
 
           size_t directive_line_ix = 0;
-          while (directive_line_ix < directive_line_len) {
-            if (directive_line[directive_line_ix] == ' ' || directive_line[directive_line_ix] == '\t' || directive_line[directive_line_ix] == ';') {
+          while (directive_line_ix < drcv_ln_len) {
+            if (drcv_ln[directive_line_ix] == ' ' || drcv_ln[directive_line_ix] == '\t' || drcv_ln[directive_line_ix] == ';') {
               directive_name[directive_name_len] = '\0';
               break;
             }
             if (directive_name_len == directive_name_sz - 2) {
-              fprintf (stderr, "Directive name too long (%s)\n", directive_line);
+              fprintf (stderr, "Directive name too long (%s)\n", drcv_ln);
               return true; // TODO: ropen not closed.
             }
-            directive_name[directive_name_len] = directive_line[directive_line_ix];
+            directive_name[directive_name_len] = drcv_ln[directive_line_ix];
             directive_line_ix++;
             directive_name_len++;
           }
 
           printf ("directive_name (%li) \"%s\"\n", directive_name_len, directive_name);
           if (directive_name_len == 1) {
-            fprintf (stderr, "Empty directive in \"%s\" line %li\n", path, directive_line_nr);
-            load_lo = false;
+            fprintf (stderr, "Empty directive in \"%s\" line %li\n", path, drcv_ln_nr);
+            loop = false;
             ret = true;
             break;
           }
@@ -150,17 +152,17 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
           char directive_value[directive_value_sz];
           size_t directive_value_len = 0;
 
-          for (; directive_line_ix < directive_line_len; directive_line_ix++) {
-            if (directive_line[directive_line_ix] == ';') {
+          for (; directive_line_ix < drcv_ln_len; directive_line_ix++) {
+            if (drcv_ln[directive_line_ix] == ';') {
               directive_value[directive_value_len] = '\0';
               break;
             }
 
             if (directive_value_len == 0) {
-              if (directive_line[directive_line_ix] == ' ' || directive_line[directive_line_ix] == '\t') continue;
+              if (drcv_ln[directive_line_ix] == ' ' || drcv_ln[directive_line_ix] == '\t') continue;
             }
 
-            directive_value[directive_value_len] = directive_line[directive_line_ix];
+            directive_value[directive_value_len] = drcv_ln[directive_line_ix];
             directive_value_len++;
           }
 
@@ -177,21 +179,21 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
           } else if (!strcmp (directive_name, "allow_start_without_connection_management_threads")) {
 
           } else {
-            fprintf (stderr, "Unknow directive \"%s\" in \"%s\" line %li\n", directive_name, path, directive_line_nr);
-            load_lo = false;
+            fprintf (stderr, "Unknow directive \"%s\" in \"%s\" line %li\n", directive_name, path, drcv_ln_nr);
+            loop = false;
             ret = true;
           }
 
-          directive_line[0] = '\0';
-          directive_line_len = 0;
-          got_directive_line = false;
+          drcv_ln[0] = '\0';
+          drcv_ln_len = 0;
+          got_ln = false;
         }
       }
     }
   }
 
-  if (ropen != -1 && close (ropen) != 0) fprintf (stderr, "Failed to close master configuration file \"%s\" (%s)\n",
-                                                  path, strerror (errno));
+  if (fd != -1 && close (fd) != 0) fprintf (stderr, "Failed to close master configuration file \"%s\" (%s)\n", path,
+                                            strerror (errno));
 
   return ret;
 }

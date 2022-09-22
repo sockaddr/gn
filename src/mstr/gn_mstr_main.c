@@ -38,7 +38,10 @@ gn_mstr_main (void)
 
   int ret = 0;
 
-  (void)! gn_mstr_cfg_load ("./etc/gn/gn.cfg", &mc);
+  if (gn_mstr_cfg_load ("./etc/gn/gn.cfg", &mc)) {
+    ret = 1;
+    goto lbl_err_cfg_load;
+  }
 
   if (gn_ipc_path_gen (&mc.ipc_addr)) {
     ret = 1;
@@ -88,6 +91,7 @@ gn_mstr_main (void)
 
   lbl_err_ipc_create:
   lbl_err_ipc_path:
+  lbl_err_cfg_load:
   free (mc.self_path);
 
   return ret;
