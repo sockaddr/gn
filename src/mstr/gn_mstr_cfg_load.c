@@ -61,27 +61,33 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
 
         if (!got_ln) { // If we don't have a directive line...
           if (strchr (buf, ';') != NULL) { // and we have a line delimiter in the read buffer...
-            // Append to the directive line buffer
+            // Append to the directive line buffer.
             size_t buf_i = 0;
             for (; buf[buf_i] != ';'; buf_i++) {
-              // Don't append leading new-line characters
+              // Don't append leading new-line characters.
               if (buf[buf_i] == '\n') {
                 ln_nr++;
                 continue;
               }
 
-              // Here, we skipped new-lines, now we're at the line where the directive starts
+              // Here, we skipped new-lines, now we're at the line where the directive starts.
               if (drcv_ln_len == 0) {
-                drcv_ln_nr = ln_nr; // Set the directive line number
+                drcv_ln_nr = ln_nr; // Set the directive line number.
                 if (buf[buf_i] == ' ' || buf[buf_i] == '\t') continue; // Don't append leading whitespace.
               }
 
-              // Now append
+              if (drcv_ln_len == DRCV_LN_SZ - 2) {
+                fprintf (stderr, "Directive line buffer too small (%i bytes)\n", DRCV_LN_SZ);
+                loop = false;
+                goto lbl_end;
+              }
+
+              // Now append.
               drcv_ln[drcv_ln_len] = buf[buf_i];
               drcv_ln_len++;
             }
 
-            const size_t sem_ix = buf_i; // Semicolon index.
+            const size_t sem_i = buf_i; // Semicolon index.
             // Append the semicolon to the directive line.
             drcv_ln[drcv_ln_len] = buf[buf_i];
             drcv_ln_len++;
@@ -89,29 +95,35 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
 
             // Move the remaining read_buf data to the beginning of read_buf.
             buf_i++;
-            for (size_t i = 0; buf_i < buf_len; i++, buf_i++) {
-              // if (read_buf[read_buf_ix] == '\n') line_nr++;
-              buf[i] = buf[buf_i];
-            }
-            buf_len = buf_len - sem_ix - 1; // Update read_buf length.
+            for (size_t buf_i_s = 0; buf_i < buf_len; buf_i_s++, buf_i++) buf[buf_i_s] = buf[buf_i];
+            buf_len = buf_len - sem_i - 1; // Update read_buf length.
             buf[buf_len] = '\0';
 
             got_ln = true;
-          } else {
+          } else { // and we don't have a line delimiter in the read buffer...
             for (size_t buf_i = 0; buf[buf_i] != '\0'; buf_i++) {
+              // Don't append leading new-line characters.
               if (buf[buf_i] == '\n') {
                 ln_nr++;
                 continue;
               }
 
               if (drcv_ln_len == 0) {
-                drcv_ln_nr = ln_nr;
-                // Don't append leading whitespace.
-                if (buf[buf_i] == ' ' || buf[buf_i] == '\t') continue;
+                drcv_ln_nr = ln_nr; // Set the directive line number.
+                if (buf[buf_i] == ' ' || buf[buf_i] == '\t') continue; // Don't append leading whitespace.
               }
+
+              if (drcv_ln_len == DRCV_LN_SZ - 2) {
+                fprintf (stderr, "Directive line buffer too small (%i bytes)\n", DRCV_LN_SZ);
+                loop = false;
+                goto lbl_end;
+              }
+
+              // Now append.
               drcv_ln[drcv_ln_len] = buf[buf_i];
               drcv_ln_len++;
             }
+
             drcv_ln[drcv_ln_len] = '\0';
 
             buf_len = 0;
@@ -192,6 +204,7 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
     }
   }
 
+  lbl_end:
   if (fd != -1 && close (fd) != 0) fprintf (stderr, "Failed to close master configuration file \"%s\" (%s)\n", path,
                                             strerror (errno));
 
