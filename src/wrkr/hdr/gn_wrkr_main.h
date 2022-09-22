@@ -9,16 +9,11 @@
 #include <string.h>
 #include <sys/socket.h>
 
-void gn_lstnr_cfg_ini (gn_lstnr_cfg_s * const)
-  __attribute__((cold)) __attribute__((nonnull));
-
 void gn_lstnr_cfg_lst_ini (gn_lstnr_cfg_lst_s * const)
   __attribute__((cold)) __attribute__((nonnull));
 
-bool gn_lstnr_cfg_lst_pshb (gn_lstnr_cfg_lst_s * const, gn_lstnr_cfg_s * const)
-  __attribute__((cold)) __attribute__((nonnull)) __attribute__ ((warn_unused_result));
-
-int gn_recv_fd (int);
+void gn_lstnrs_recv (const int, gn_lstnr_cfg_lst_s * const)
+  __attribute__((cold)) __attribute__((nonnull));
 
 void gn_start_conn_acpt_thrds (gn_wrkr_cfg_s * const)
   __attribute__((cold)) __attribute__((nonnull));

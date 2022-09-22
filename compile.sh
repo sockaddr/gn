@@ -52,6 +52,7 @@ src/wrkr/gn_new_conn_list_list_init.c \
 src/wrkr/gn_new_conn_list_list_push_back.c \
 \
 src/wrkr/gn_get_new_conns.c \
+src/wrkr/gn_lstnrs_recv.c \
 src/wrkr/gn_pass_conn.c \
 src/wrkr/gn_recv_fd.c \
 \
