@@ -38,7 +38,7 @@ gn_mstr_main (void)
 
   int ret = 0;
 
-  gn_mstr_cfg_load ();
+  (void)! gn_mstr_cfg_load ("./etc/gn/gn.cfg", &mc);
 
   if (gn_ipc_path_gen (&mc.ipc_addr)) {
     ret = 1;

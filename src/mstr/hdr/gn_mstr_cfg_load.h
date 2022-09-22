@@ -1,12 +1,12 @@
 #ifndef GN_MSTR_CFG_LOAD_H
 #define GN_MSTR_CFG_LOAD_H
 
+#include <mstr/hdr/gn_mstr_cfg_s.h>
+
 #include <errno.h>
-#include <error.h>
 #include <fcntl.h>
 #include <stdbool.h>
 #include <stdio.h>
-#include <string.h>
 #include <unistd.h>
 
 #endif // GN_MSTR_CFG_LOAD_H
