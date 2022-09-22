@@ -17,6 +17,6 @@ bool gn_new_conn_list_list_push_back (gn_new_conn_list_list_s * const, gn_new_co
   __attribute__((cold)) __attribute__((nonnull));
 
 bool gn_start_conn_mgmt_thrd (gn_wrkr_cfg_s * const, gn_conn_mgmt_thrd_conf_s * const)
-  __attribute__((cold)) __attribute__((nonnull)) __attribute__ ((warn_unused_result));
+  __attribute__((cold)) __attribute__((nonnull)) __attribute__((warn_unused_result));
 
 #endif // GN_START_CONN_MGMT_THRDS_H
