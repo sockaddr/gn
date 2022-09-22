@@ -32,6 +32,8 @@ bool gn_lstnr_cfg_lst_pop (gn_lstnr_cfg_lst_s * const)
 void gn_mstr_cfg_ini (gn_mstr_cfg_s * const)
   __attribute__((cold)) __attribute__((nonnull));
 
+void gn_mstr_cfg_load ();
+
 char * gn_self_path (uint8_t * const)
   __attribute__((cold)) __attribute__((nonnull)) __attribute__((warn_unused_result));
 

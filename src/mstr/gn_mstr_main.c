@@ -38,6 +38,8 @@ gn_mstr_main (void)
 
   int ret = 0;
 
+  gn_mstr_cfg_load ();
+
   if (gn_ipc_path_gen (&mc.ipc_addr)) {
     ret = 1;
     goto lbl_err_ipc_path;

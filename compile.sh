@@ -22,6 +22,7 @@ src/mstr/gn_create_lstnr.c \
 src/mstr/gn_lstnr_send.c \
 src/mstr/gn_lstnrs_send.c \
 src/mstr/gn_mstr_cfg_ini.c \
+src/mstr/gn_mstr_cfg_load.c \
 src/mstr/gn_mstr_main.c \
 src/mstr/gn_self_path.c \
 src/mstr/gn_send_fd.c \
