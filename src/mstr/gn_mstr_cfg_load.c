@@ -69,7 +69,12 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
                 continue;
               }
 
-              if (directive_line_len == 0) directive_line_nr = line_nr;
+              if (directive_line_len == 0) {
+                directive_line_nr = line_nr;
+                // Don't append leading whitespace.
+                if (read_buf[read_buf_ix] == ' ' || read_buf[read_buf_ix] == '\t') continue;
+              }
+
               directive_line[directive_line_len] = read_buf[read_buf_ix];
               directive_line_len++;
             }
@@ -97,7 +102,11 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
                 continue;
               }
 
-              if (directive_line_len == 0) directive_line_nr = line_nr;
+              if (directive_line_len == 0) {
+                directive_line_nr = line_nr;
+                // Don't append leading whitespace.
+                if (read_buf[read_buf_ix] == ' ' || read_buf[read_buf_ix] == '\t') continue;
+              }
               directive_line[directive_line_len] = read_buf[read_buf_ix];
               directive_line_len++;
             }
