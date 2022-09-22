@@ -109,6 +109,30 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
 
         if (got_directive_line) {
           printf ("%s:%li: (%li) \"%s\"\n", path, directive_line_nr, directive_line_len, directive_line);
+
+          const size_t directive_name_sz = 64;
+          char directive_name[directive_name_sz];
+          size_t directive_name_len = 0;
+          size_t directive_name_ix = 0;
+
+          size_t directive_line_ix = 0;
+          while (directive_line_ix < directive_line_len) {
+            if (directive_line[directive_line_ix] == ' ' || directive_line[directive_line_ix] == '\t') {
+              directive_name[directive_name_ix] = '\0';
+              break;
+            }
+            if (directive_name_ix == directive_name_sz - 2) {
+              fprintf (stderr, "Directive name too long (%s)\n", directive_line);
+              return true; // TODO: ropen not closed.
+            }
+            directive_name[directive_name_ix] = directive_line[directive_line_ix];
+            directive_line_ix++;
+            directive_name_ix++;
+          }
+
+          directive_name_len = directive_name_ix;
+          printf ("directive_name (%li) \"%s\"\n", directive_name_len, directive_name);
+
           directive_line[0] = '\0';
           directive_line_len = 0;
           got_directive_line = false;
