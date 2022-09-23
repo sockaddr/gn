@@ -95,14 +95,12 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
             drcv_ln[drcv_ln_len] = buf[buf_i];
             drcv_ln_len++;
             drcv_ln[drcv_ln_len] = '\0';
-            printf ("drcv_ln post append '%s'\n", drcv_ln);
 
             // Move the remaining read_buf data to the beginning of read_buf.
             buf_i++;
             for (size_t buf_i_s = 0; buf_i < buf_len; buf_i_s++, buf_i++) buf[buf_i_s] = buf[buf_i];
             buf_len = buf_len - sem_i - 1; // Update read_buf length.
             buf[buf_len] = '\0';
-            printf ("remaining %li '%s'\n", buf_len, buf); // TODO: Remove.
 
             got_ln = true;
           } else { // and we don't have a line delimiter in the read buffer...
@@ -177,9 +175,15 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
             }
 
             if (drcv_val_len == 0) {
-              if (drcv_ln[drcv_ln_i] == ' ' || drcv_ln[drcv_ln_i] == '\t') continue;
+              if (drcv_ln[drcv_ln_i] == ' ' || drcv_ln[drcv_ln_i] == '\t' || drcv_ln[drcv_ln_i] == '\n') continue;
             }
-            // Add overflow check
+
+            if (drcv_val_len == DRCV_VAL_SZ - 1) {
+              fprintf (stderr, "Directive value too long \"%s\" (maximum %i bytes)\n", drcv_ln, DRCV_VAL_SZ - 1);
+              loop = false;
+              goto lbl_end;
+            }
+
             drcv_val[drcv_val_len] = drcv_ln[drcv_ln_i];
             drcv_val_len++;
           }
