@@ -43,9 +43,12 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
         break;
       }
       case 0: {
-        loop = false;
-        ret = false;
-        break;
+        if (buf_len == 0) {
+          loop = false;
+          ret = false;
+          break;
+        }
+        __attribute__((fallthrough));
       }
       default: {
         if (rread < -1) {
@@ -64,16 +67,12 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
             // Append to the directive line buffer.
             size_t buf_i = 0;
             for (; buf[buf_i] != ';'; buf_i++) {
-              // Don't append leading new-line characters.
+              if (buf[buf_i] == ' ' || buf[buf_i] == '\t') {
+                if (drcv_ln_len == 0) continue;
+              }
               if (buf[buf_i] == '\n') {
                 ln_nr++;
-                continue;
-              }
-
-              // Here, we skipped new-lines, now we're at the line where the directive starts.
-              if (drcv_ln_len == 0) {
-                drcv_ln_nr = ln_nr; // Set the directive line number.
-                if (buf[buf_i] == ' ' || buf[buf_i] == '\t') continue; // Don't append leading whitespace.
+                if (drcv_ln_len == 0) continue;
               }
 
               if (drcv_ln_len == DRCV_LN_SZ - 2) {
@@ -82,36 +81,41 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
                 goto lbl_end;
               }
 
+              if (drcv_ln_len == 0) drcv_ln_nr = ln_nr;
+
               // Now append.
               drcv_ln[drcv_ln_len] = buf[buf_i];
               drcv_ln_len++;
             }
+
+            if (drcv_ln_len == 0) drcv_ln_nr = ln_nr; // Correct the directive line number if empty directive found.
 
             const size_t sem_i = buf_i; // Semicolon index.
             // Append the semicolon to the directive line.
             drcv_ln[drcv_ln_len] = buf[buf_i];
             drcv_ln_len++;
             drcv_ln[drcv_ln_len] = '\0';
+            printf ("drcv_ln post append '%s'\n", drcv_ln);
 
             // Move the remaining read_buf data to the beginning of read_buf.
             buf_i++;
             for (size_t buf_i_s = 0; buf_i < buf_len; buf_i_s++, buf_i++) buf[buf_i_s] = buf[buf_i];
             buf_len = buf_len - sem_i - 1; // Update read_buf length.
             buf[buf_len] = '\0';
+            printf ("remaining %li '%s'\n", buf_len, buf); // TODO: Remove.
 
             got_ln = true;
           } else { // and we don't have a line delimiter in the read buffer...
             for (size_t buf_i = 0; buf[buf_i] != '\0'; buf_i++) {
-              // Don't append leading new-line characters.
+              if (buf[buf_i] == ' ' || buf[buf_i] == '\t') {
+                if (drcv_ln_len == 0) continue;
+              }
               if (buf[buf_i] == '\n') {
                 ln_nr++;
-                continue;
+                if (drcv_ln_len == 0) continue;
               }
 
-              if (drcv_ln_len == 0) {
-                drcv_ln_nr = ln_nr; // Set the directive line number.
-                if (buf[buf_i] == ' ' || buf[buf_i] == '\t') continue; // Don't append leading whitespace.
-              }
+              if (drcv_ln_len == 0) drcv_ln_nr = ln_nr; // Set the directive line number.
 
               if (drcv_ln_len == DRCV_LN_SZ - 2) {
                 fprintf (stderr, "Directive line buffer too small (%i bytes)\n", DRCV_LN_SZ);
@@ -133,65 +137,67 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
         if (got_ln) {
           printf ("%s:%li: (%li) \"%s\"\n", path, drcv_ln_nr, drcv_ln_len, drcv_ln);
 
-          const size_t directive_name_sz = 64;
-          char directive_name[directive_name_sz];
-          size_t directive_name_len = 0;
+          char drcv_name[DRCV_NAME_SZ];
+          memset (drcv_name, 0, DRCV_NAME_SZ);
+          size_t drcv_name_len = 0;
 
-          size_t directive_line_ix = 0;
-          while (directive_line_ix < drcv_ln_len) {
-            if (drcv_ln[directive_line_ix] == ' ' || drcv_ln[directive_line_ix] == '\t' || drcv_ln[directive_line_ix] == ';') {
-              directive_name[directive_name_len] = '\0';
+          size_t drcv_ln_i = 0;
+          for (; drcv_ln_i < drcv_ln_len; drcv_ln_i++) {
+            if (drcv_ln[drcv_ln_i] == ' ' || drcv_ln[drcv_ln_i] == '\t' || drcv_ln[drcv_ln_i] == '\n' || drcv_ln[drcv_ln_i] == ';') {
+              drcv_name[drcv_name_len] = '\0';
               break;
             }
-            if (directive_name_len == directive_name_sz - 2) {
-              fprintf (stderr, "Directive name too long (%s)\n", drcv_ln);
-              return true; // TODO: ropen not closed.
+
+            if (drcv_name_len == DRCV_NAME_SZ - 2) {
+              fprintf (stderr, "Directive name too long \"%s\" (maximum %i bytes)\n", drcv_ln, DRCV_NAME_SZ - 2);
+              loop = false;
+              goto lbl_end;
             }
-            directive_name[directive_name_len] = drcv_ln[directive_line_ix];
-            directive_line_ix++;
-            directive_name_len++;
+
+            drcv_name[drcv_name_len] = drcv_ln[drcv_ln_i];
+            drcv_name_len++;
           }
 
-          printf ("directive_name (%li) \"%s\"\n", directive_name_len, directive_name);
-          if (directive_name_len == 1) {
+          printf ("drcv_name (%li) \"%s\"\n", drcv_name_len, drcv_name);
+          if (drcv_name_len == 0) {
             fprintf (stderr, "Empty directive in \"%s\" line %li\n", path, drcv_ln_nr);
             loop = false;
             ret = true;
             break;
           }
 
-          const size_t directive_value_sz = 65536;
-          char directive_value[directive_value_sz];
-          size_t directive_value_len = 0;
+          char drcv_val[DRCV_VAL_SZ];
+          memset (drcv_val, 0, DRCV_VAL_SZ);
+          size_t drcv_val_len = 0;
 
-          for (; directive_line_ix < drcv_ln_len; directive_line_ix++) {
-            if (drcv_ln[directive_line_ix] == ';') {
-              directive_value[directive_value_len] = '\0';
+          for (; drcv_ln_i < drcv_ln_len; drcv_ln_i++) {
+            if (drcv_ln[drcv_ln_i] == ';') {
+              drcv_val[drcv_val_len] = '\0';
               break;
             }
 
-            if (directive_value_len == 0) {
-              if (drcv_ln[directive_line_ix] == ' ' || drcv_ln[directive_line_ix] == '\t') continue;
+            if (drcv_val_len == 0) {
+              if (drcv_ln[drcv_ln_i] == ' ' || drcv_ln[drcv_ln_i] == '\t') continue;
             }
-
-            directive_value[directive_value_len] = drcv_ln[directive_line_ix];
-            directive_value_len++;
+            // Add overflow check
+            drcv_val[drcv_val_len] = drcv_ln[drcv_ln_i];
+            drcv_val_len++;
           }
 
-          printf ("directive_value (%li) \"%s\"\n", directive_value_len, directive_value);
+          printf ("drcv_val (%li) \"%s\"\n", drcv_val_len, drcv_val);
 
-          if (!strcmp (directive_name, "workers")) {
+          if (!strcmp (drcv_name, "workers")) {
 
-          } else if (!strcmp (directive_name, "connection_acceptance_threads")) {
+          } else if (!strcmp (drcv_name, "connection_acceptance_threads")) {
 
-          } else if (!strcmp (directive_name, "connection_management_threads")) {
+          } else if (!strcmp (drcv_name, "connection_management_threads")) {
 
-          } else if (!strcmp (directive_name, "allow_start_without_connection_acceptance_threads")) {
+          } else if (!strcmp (drcv_name, "allow_start_without_connection_acceptance_threads")) {
 
-          } else if (!strcmp (directive_name, "allow_start_without_connection_management_threads")) {
+          } else if (!strcmp (drcv_name, "allow_start_without_connection_management_threads")) {
 
           } else {
-            fprintf (stderr, "Unknow directive \"%s\" in \"%s\" line %li\n", directive_name, path, drcv_ln_nr);
+            fprintf (stderr, "Unknow directive \"%s\" in \"%s\" line %li\n", drcv_name, path, drcv_ln_nr);
             loop = false;
             ret = true;
           }
