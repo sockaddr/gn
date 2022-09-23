@@ -188,6 +188,17 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
             drcv_val_len++;
           }
 
+          if (drcv_val_len > 0) {
+            for (size_t drcv_val_i = drcv_val_len - 1; drcv_val_i > 0; drcv_val_i--) {
+              if (drcv_val[drcv_val_i] == ' ' || drcv_val[drcv_val_i] == '\t' || drcv_val[drcv_val_i] == '\n') {
+                drcv_val_len--;
+                continue;
+              }
+              drcv_val[drcv_val_len] = '\0';
+              break;
+            }
+          }
+
           printf ("drcv_val (%li) \"%s\"\n", drcv_val_len, drcv_val);
 
           if (!strcmp (drcv_name, "workers")) {
