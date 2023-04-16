@@ -54,7 +54,7 @@ gn_mstr_main (void)
   }
 
   // TODO: Load master config.
-  mc.wrkrs_num = 2;
+  mc.wrkrs_num = 1;
 
   // Test code, start
   (void)! gn_create_lstnr (&mc.lstnr_cfg_lst, "0.0.0.0", 8080);
