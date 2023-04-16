@@ -38,7 +38,7 @@ gn_wrkr_main (const char * const ipc_addr_str)
 
   // TODO: Maybe use functions to validate.
   wc.conn_acpt_thrd_num = 4;
-  wc.conn_mgmt_thrd_num = 2;
+  wc.conn_mgmt_thrd_num = 1;
   wc.start_wout_conn_acpt_thrds = true;
   wc.start_wout_conn_mgmt_thrds = true;
 
