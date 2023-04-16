@@ -77,25 +77,31 @@ gn_conn_acpt_thrd (void * const p)
       error_at_line (0, 0, "", 0, "[%i] Connection from [%s]:%i to [%s] / [%s]:%i\n\n", getpid (), saddr, sport, lstnr_conf->addr, daddr, lstnr_conf->port);
 
       gn_conn_s * const conn = malloc (sizeof (gn_conn_s));
-      if (conn != NULL) {
-        gn_conn_ini (conn);
-        conn->saddr = malloc (strlen (saddr) + 1);
-        strcpy (conn->saddr, saddr);
-        conn->sport = sport;
-        conn->daddr = malloc (strlen (daddr) + 1);
-        strcpy (conn->daddr, daddr);
-        conn->fd = raccept4;
-        conn->lstnr_cfg = lstnr_conf;
-        if (!gn_pass_conn (conn_mgmt_thrd_conf_list, conn)) continue;
-
-        error_at_line (0, 0, __FILE__, __LINE__, "Connection wasn't passed");
-      } else error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate connection structure");
-
-      if (conn != NULL) {
-        free (conn->daddr);
-        free (conn->saddr);
-        free (conn);
+      if (conn == NULL) {
+        error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate connection structure");
+        goto lbl_close_raccept4;
       }
+
+      gn_conn_ini (conn);
+      conn->saddr = malloc (strlen (saddr) + 1);
+      if (conn->saddr == NULL) goto lbl_free_conn;
+      strcpy (conn->saddr, saddr);
+
+      conn->sport = sport;
+      conn->daddr = malloc (strlen (daddr) + 1);
+      if (conn->daddr == NULL) goto lbl_free_conn;
+      strcpy (conn->daddr, daddr);
+
+      conn->fd = raccept4;
+      conn->lstnr_cfg = lstnr_conf;
+      if (!gn_pass_conn (conn_mgmt_thrd_conf_list, conn)) continue;
+      error_at_line (0, 0, __FILE__, __LINE__, "Connection wasn't passed");
+
+      lbl_free_conn:
+      // TODO: Maybe call gn_conn_close()
+      free (conn->daddr);
+      free (conn->saddr);
+      free (conn);
 
       lbl_close_raccept4:
       // TODO: Loop close() if allowed by user in configuration file. Default: don't loop.
