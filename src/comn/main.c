@@ -3,6 +3,7 @@
 int
 main (const int argc, const char * const * const argv)
 {
+  // Checks argc and argv don't contain invalid values.
   if (argc < 0) {
     fprintf (stderr, "Negative number of command line arguments (%i)\n", argc);
     return 1;
@@ -18,6 +19,7 @@ main (const int argc, const char * const * const argv)
 
   const char * ipc_addr_str = NULL; // "Address" of the Unix socket for master/worker IPC.
 
+  // Parse command line arguments.
   for (int argi = 1; argi < argc; argi++)
   {
     if (argv[argi] == NULL) {
@@ -42,10 +44,16 @@ main (const int argc, const char * const * const argv)
     }
   }
 
-  int ret = 0;
+  int ret = 0; // Contains exit code for this function.
+
   // If ipc_addr_str is set it means we must start as worker. --ipc-addr argument doesn't make sense for master process.
-  if (ipc_addr_str == NULL) ret = gn_mstr_main ();
-  else ret = gn_wrkr_main (ipc_addr_str); // TODO: Maybe move ipc_addr_str to gn_wrkr_cfg_s.
+  if (ipc_addr_str == NULL) {
+    // Start as master process.
+    ret = gn_mstr_main ();
+  } else {
+    // Start as worker process.
+    ret = gn_wrkr_main (ipc_addr_str); // TODO: Maybe move ipc_addr_str to gn_wrkr_cfg_s.
+  }
 
   return ret;
 }
