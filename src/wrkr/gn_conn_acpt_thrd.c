@@ -78,7 +78,7 @@ gn_conn_acpt_thrd (void * const p)
 
       gn_conn_s * const conn = malloc (sizeof (gn_conn_s));
       if (conn != NULL) {
-        gn_conn_init (conn);
+        gn_conn_ini (conn);
         conn->saddr = malloc (strlen (saddr) + 1);
         strcpy (conn->saddr, saddr);
         conn->sport = sport;

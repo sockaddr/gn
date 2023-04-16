@@ -1,11 +1,11 @@
-#include <wrkr/hdr/gn_conn_init.h>
+#include <wrkr/hdr/gn_conn_ini.h>
 
 /*
  * TODO: Add description.
  */
 
 void
-gn_conn_init (gn_conn_s * const conn)
+gn_conn_ini (gn_conn_s * const conn)
 {
   conn->fd = -1;
   conn->saddr = NULL;

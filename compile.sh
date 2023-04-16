@@ -42,7 +42,7 @@ src/wrkr/gn_conn_mgmt_thrd_conf_list_init.c \
 src/wrkr/gn_conn_mgmt_thrd_conf_list_push_back.c \
 src/wrkr/gn_conn_mgmt_thrd_conf_list_remove.c \
 \
-src/wrkr/gn_conn_init.c \
+src/wrkr/gn_conn_ini.c \
 src/wrkr/gn_conn_list_init.c \
 src/wrkr/gn_conn_list_push_back.c \
 \

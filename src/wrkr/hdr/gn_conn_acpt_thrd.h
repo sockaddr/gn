@@ -7,7 +7,7 @@
 
 void gn_lstnr_conf_list_init (gn_lstnr_cfg_lst_s * const);
 
-void gn_conn_init (gn_conn_s * const)
+void gn_conn_ini (gn_conn_s * const)
   __attribute__((hot)) __attribute__((nonnull));
 
 bool gn_pass_conn (const gn_conn_mgmt_thrd_conf_list_s * const, gn_conn_s * const)

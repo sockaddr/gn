@@ -1,5 +1,5 @@
-#ifndef GN_CONN_INIT_H
-#define GN_CONN_INIT_H
+#ifndef GN_CONN_INI_H
+#define GN_CONN_INI_H
 
 #include <wrkr/hdr/gn_conn_s.h>
 
