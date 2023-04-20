@@ -8,12 +8,17 @@ main (const int argc, const char * const * const argv)
     fprintf (stderr, "Negative number of command line arguments (%i)\n", argc);
     return 1;
   }
-  if (argc > 50) { // TODO: Maybe lower this number.
+  if (argc > 8) { // TODO: Maybe lower this number.
     fprintf (stderr, "Number of command line arguments is too high (%i)\n", argc);
     return 1;
   }
+
   if (argv[0] == NULL) {
     fprintf (stderr, "argv[0] is NULL\n");
+    return 1;
+  }
+  if (argv[argc] != NULL) {
+    fprintf (stderr, "argv[%i] is %p instead of NULL\n", argc, argv[argc]);
     return 1;
   }
 
