@@ -1,5 +1,7 @@
 #include <comn/hdr/main.h>
 
+// TODO: Maybe add program name and PID in fprintf() output.
+
 int
 main (const int argc, const char * const * const argv)
 {
@@ -36,7 +38,7 @@ main (const int argc, const char * const * const argv)
         fprintf (stderr, "Command line argument \"--ipc-addr\" already set\n");
         return 1;
       }
-      if (++argi == argc) {
+      if (argv[++argi] == NULL) {
         fprintf (stderr, "Missing value for command line argument %i \"--ipc-addr\"\n", argi);
         return 1;
       }
@@ -49,7 +51,7 @@ main (const int argc, const char * const * const argv)
     }
   }
 
-  int ret = 0; // Contains exit code for this function.
+  int ret = 0;
 
   // If ipc_addr_str is set it means we must start as worker. --ipc-addr argument doesn't make sense for master process.
   if (ipc_addr_str == NULL) {
