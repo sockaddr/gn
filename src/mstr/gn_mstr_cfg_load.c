@@ -65,18 +65,24 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
 
         if (!got_ln) { // If we don't have a directive line...
           if (strchr (buf, ';') != NULL) { // and we have a line delimiter in the read buffer...
-            // Append to the directive line buffer.
+            // Append to the directive line buffer until we reach the semicolon.
             size_t buf_i = 0;
             for (; buf[buf_i] != ';'; buf_i++) {
-              if (buf[buf_i] == ' ' || buf[buf_i] == '\t') {
-                if (drcv_ln_len == 0) continue;
+              // Don't append whitespace before the beginning of the directive.
+              if (buf[buf_i] == ' ' || buf[buf_i] == '\t') { // If we find a whitespace...
+                if (drcv_ln_len == 0) continue; // and the buffer is empty, don't append, but continue.
               }
+              // Same thing as in the block above, but this time we skip '\n'.
               if (buf[buf_i] == '\n') {
                 ln_nr++;
                 if (drcv_ln_len == 0) continue;
               }
 
+              /* Check the directive line buffer has enough space before we try to append to it.
+               * DRCV_LN_SZ - 2 because we have to keep space for the semicolon and the NULL byte.
+               */
               if (drcv_ln_len == DRCV_LN_SZ - 2) {
+                // TODO: Maybe display more info such as file name, buffer content, etc.
                 fprintf (stderr, "Directive line buffer too small (%i bytes)\n", DRCV_LN_SZ);
                 loop = false;
                 goto lbl_end;
@@ -84,9 +90,7 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
 
               if (drcv_ln_len == 0) drcv_ln_nr = ln_nr;
 
-              // Now append.
-              drcv_ln[drcv_ln_len] = buf[buf_i];
-              drcv_ln_len++;
+              drcv_ln[drcv_ln_len++] = buf[buf_i]; // Now append.
             }
 
             if (drcv_ln_len == 0) drcv_ln_nr = ln_nr; // Correct the directive line number if empty directive found.
