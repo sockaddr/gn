@@ -1,5 +1,9 @@
 #include <comn/hdr/gn_lstnr_cfg_lst_ini.h>
 
+/*
+ * TODO: Add description.
+ */
+
 void
 gn_lstnr_cfg_lst_ini (gn_lstnr_cfg_lst_s * const lst)
 {

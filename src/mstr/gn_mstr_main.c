@@ -24,7 +24,7 @@ uint8_t
 gn_mstr_main (void)
 {
   // Test code, start
-  if (signal (SIGINT, sigint_handler) == SIG_ERR) {
+  if (signal (SIGINT, sigint_handler) == SIG_ERR) { // To stop the program with Ctrl-C
     error_at_line (0, errno, __FILE__, __LINE__, "Failed to register SIGINT handler");
   }
   // Test code, end
@@ -38,7 +38,7 @@ gn_mstr_main (void)
 
   int ret = 0;
 
-  if (gn_mstr_cfg_load ("./etc/gn/gn.cfg", &mc)) {
+  if (gn_mstr_cfg_load ("./etc/gn/gn.cfg", &mc)) { // TODO: Remove hardcoded value.
     ret = 1;
     goto lbl_err_cfg_load;
   }
