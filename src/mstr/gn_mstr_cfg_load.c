@@ -32,14 +32,22 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
 
   while (loop) {
     // Append to read buffer. It may contain unused data from the previous read().
-    errno = 0;
     const ssize_t rread = read (fd, &buf[buf_len], READ_BUF_SZ - 1 - buf_len);
     switch (rread) {
       case -1: {
-        fprintf (stderr, "Failed to read master configuration file \"%s\" (%s)\n", path, strerror (errno));
-        loop = false;
-
-        if (errno == EBADF) fd = -1;
+        switch (errno) {
+          // Don't stop reading if one of these errors occur.
+          case EINTR:
+          case EIO: {
+            break;
+          }
+          default: {
+            // Stop reading and invalidate fd if any other error occurs.
+            fprintf (stderr, "Failed to read master configuration file \"%s\" (%s)\n", path, strerror (errno));
+            fd = -1;
+            loop = false;
+          }
+        }
         break;
       }
       case 0: {
@@ -51,13 +59,6 @@ gn_mstr_cfg_load (const char * const path, gn_mstr_cfg_s * const mc)
         __attribute__((fallthrough));
       }
       default: {
-        if (rread < -1) {
-          fprintf (stderr, "Unexpected read() error while loading master configuration file \"%s\". "
-                           "Code %li, errno %i (%s)\n", path, rread, errno, strerror (errno));
-          loop = false;
-          break;
-        }
-
         // Append to read buffer. It may contain unused data from the previous read().
         buf_len += (size_t)rread;
         buf[buf_len] = '\0';
