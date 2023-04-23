@@ -56,7 +56,7 @@ gn_lstnr_send (const int ipc_fd, const gn_lstnr_cfg_s * const lc)
         default: {
           const size_t recv_buf_len = (size_t)rrecv;
           recv_buf[recv_buf_len] = '\0';
-          printf ("Received from worker #%i (%li) \"%s\"\n", -1 /* rfork */, recv_buf_len, recv_buf);
+          printf ("Received from worker #%i <-- not an error (%li) \"%s\"\n", -1 /* rfork */, recv_buf_len, recv_buf);
           gn_send_fd (ipc_fd, lc->fd);
         }
       }
