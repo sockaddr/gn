@@ -97,7 +97,7 @@ gn_wrkr_main (const char * const ipc_addr_str)
 
     close (lc->fd);
     lc->fd = -1;
-
+    free (lc->addr);
     free (lc);
     lc = next_lc;
   }

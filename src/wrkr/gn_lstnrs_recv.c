@@ -6,7 +6,7 @@ gn_lstnrs_recv (const int ipc_fd, gn_lstnr_cfg_lst_s * const lc_lst)
   bool recv_loop = true;
   while (recv_loop) {
 
-    gn_lstnr_cfg_s * const lc = malloc (sizeof (gn_lstnr_cfg_s));
+    gn_lstnr_cfg_s * lc = malloc (sizeof (gn_lstnr_cfg_s));
     if (lc == NULL) {
       error_at_line (0, 0, __FILE__, __LINE__, "Failed to allocate gn_lstnr_cfg_s");
       return;
@@ -106,11 +106,18 @@ gn_lstnrs_recv (const int ipc_fd, gn_lstnr_cfg_lst_s * const lc_lst)
                 (void)! gn_lstnr_cfg_lst_pshb (lc_lst, lc); // TODO: Check error.
 
                 printf ("fd = %i, addr (%li) = \"%s\", port = %i\n", lc->fd , strlen (lc->addr), lc->addr, lc->port);
+                lc = NULL;
               }
             }
           }
         }
       }
+    }
+
+    if (lc != NULL) {
+      if (lc->fd > -1) close (lc->fd);
+      free (addr);
+      free (lc);
     }
   }
 }
